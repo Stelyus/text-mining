@@ -1,7 +1,6 @@
 package main
 
 /**
- * For you my love FRANCK how to use the Trie
  * how to called :
  * obj := Constructor();
  * obj.Insert(word);
@@ -15,7 +14,7 @@ type Trie struct {
 }
 
 // Constructor initialize your data structure here.
-func Constructor() Trie {
+func TrieConstructor() Trie {
 	d := make(map[string]bool, 1024)
 	p := make(map[string]bool, 4096)
 	p[""] = true
