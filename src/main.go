@@ -1,5 +1,8 @@
 package main
 
 func main() {
-	readFile()
+	
+	// Si lancer depuis autre que src, le path n'est pas correct
+	path := "../ressources/words.txt"
+	readFile(path)
 }
