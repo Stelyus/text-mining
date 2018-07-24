@@ -13,6 +13,8 @@ type wordFreq struct {
 	freq int
 }
 
+
+// Read a file and return the content
 func readFile(path string) string {
 	b, err := ioutil.ReadFile(path)
 
@@ -25,6 +27,17 @@ func readFile(path string) string {
 }
 
 
+/*
+	Split a text into an array of (word (string), freq (int))
+
+	Ex:
+	
+	diieu	2337
+	diieux	327
+
+	[(diieu, 2337), (diieux, 327)]
+*/
+	
 func parseFileToArray(text string) []wordFreq {
 	arr := strings.Split(text, "\n")
 	var arrayWordFreq []wordFreq
