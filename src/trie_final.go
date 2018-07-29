@@ -6,26 +6,16 @@ type TrieNode struct {
 	children map[rune]*TrieNode
 }
 
-type Trie struct {
-	root *TrieNode
+
+// Creates a new TrieNode as  root.
+func NewTrie() *TrieNode {
+	return &TrieNode{children: make(map[rune]*TrieNode)}
 }
 
 
-// Creates a new Trie2 with an initialized root Node.
-func NewTrie() *Trie {
-	return &Trie{
-		root: &TrieNode{children: make(map[rune]*TrieNode)},
-	}
-}
-
-// Returns the root node for the Trie2.
-func (t *Trie) Root() *TrieNode {
-	return t.root
-}
-
-func (t *Trie) Add(key string, freq int) *TrieNode {
+func (root *TrieNode) Add(key string, freq int) *TrieNode {
 	runes := []rune(key)
-	node := t.root
+	node := root
 	for i := range runes {
 		r := runes[i]
 		if n, ok := node.children[r]; ok {
@@ -46,16 +36,11 @@ func (n TrieNode) Children() map[rune]*TrieNode {
 	return n.children
 }
 
-func (t *Trie) Find(key string) (*TrieNode, bool) {
-	node := findTrieNode(t.Root(), []rune(key))
+func (root *TrieNode) Find(key string) (*TrieNode, bool) {
+	node := findTrieNode(root, []rune(key))
 	if node == nil {
 		return nil, false
 	}
-
-	//node, ok := node.children[nul]
-	//if !ok || node.freq != -1 {
-	//	return nil, false
-	//}
 
 	return node, true
 }

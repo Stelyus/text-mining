@@ -52,8 +52,7 @@ func constructTrie(wordFreqArr []wordFreq ) {
 	for i := 0; i < len(wordFreqArr); i++ {
 		trie.Add(wordFreqArr[i].word, wordFreqArr[i].freq)
  	}
- 	node := trie.Root()
-	printTrie(node, 0)
+	printTrie(trie, 0)
 
 }
 
@@ -69,7 +68,6 @@ func printTrie(n *TrieNode, offset int){
 	} else {
 		fmt.Print(strconv.QuoteRune(n.val))
 	}
-
 
 	for _, v := range(n.children){
 		printTrie(v, offset + 2)
