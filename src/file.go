@@ -3,6 +3,7 @@ package main
 import (
 	"strings"
 	"strconv"
+	// "fmt"
 	"io/ioutil"
 )
 
@@ -56,10 +57,16 @@ func parseFileToArray(text string) []wordFreq {
 }
 
 func addWordToTrie(text string, root *Tree) *Tree {
-	arr := strings.Split(text, "\n")
+	var first int = 0
 
-	for i := 0; i < len(arr); i++ {
-		fields := strings.Fields(arr[i])
+	for first != -1 {
+		last := strings.IndexByte(text[first:], 10) + first
+
+		if (last == first - 1) {
+			break
+		}
+
+		fields := strings.Fields(text[first:last])
 		if len(fields) < 1 {
 			continue
 		}
@@ -70,6 +77,8 @@ func addWordToTrie(text string, root *Tree) *Tree {
 		}
 
 		root.Insert(fields[0], rune(freq))
+
+		first = last + 1
 	}
 
 	return root
