@@ -49,9 +49,28 @@ func parseFileToArray(text string) []wordFreq {
 		if err != nil {
 			panic(err)
 		}
-
 		arrayWordFreq = append(arrayWordFreq, wordFreq {word: fields[0], freq: freq})
 	}
 	
 	return arrayWordFreq
+}
+
+func addWordToTrie(text string, root *Tree) *Tree {
+	arr := strings.Split(text, "\n")
+
+	for i := 0; i < len(arr); i++ {
+		fields := strings.Fields(arr[i])
+		if len(fields) < 1 {
+			continue
+		}
+
+		freq, err := strconv.Atoi(fields[1])
+		if err != nil {
+			panic(err)
+		}
+
+		root.Insert(fields[0], rune(freq))
+	}
+
+	return root
 }

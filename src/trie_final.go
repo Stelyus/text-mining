@@ -2,7 +2,7 @@ package main
 
 type TrieNode struct {
 	Val rune
-	Freq int
+	Freq rune
 	Children map[rune]*TrieNode
 }
 
@@ -13,7 +13,7 @@ func NewTrie() *TrieNode {
 }
 
 
-func (root *TrieNode) Add(key string, freq int) *TrieNode {
+func (root *TrieNode) Add(key string, freq rune) *TrieNode {
 	runes := []rune(key)
 	node := root
 	for i := range runes {
@@ -24,7 +24,7 @@ func (root *TrieNode) Add(key string, freq int) *TrieNode {
 			if i == len(runes) - 1 {
 				node  = node.NewNode(r, freq)
 			} else{
-				node = node.NewNode(r, -1)
+				node = node.NewNode(r, rune(-1))
 			}
 		}
 
@@ -43,7 +43,7 @@ func (root *TrieNode) Find(key string) (*TrieNode, bool) {
 }
 
 // Creates and returns a pointer to a new child for the node.
-func (n *TrieNode) NewNode(val rune, freq int) *TrieNode {
+func (n *TrieNode) NewNode(val rune, freq rune) *TrieNode {
 	node := &TrieNode{
 		Val:      val,
 		Freq: freq,
