@@ -5,7 +5,8 @@ func main() {
 	path := "../ressources/words.txt"
 	//wordFreqArr := parseFileToArray(readFile(path))
 	trie := NewRadix()
-	trie = addWordToTrie(readFile(path), trie)
+	str := readFile(path)
+	trie = addWordToTrie(&str, trie)
 	//constructTrie(wordFreqArr)
 
 	// serialize()

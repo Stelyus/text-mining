@@ -56,17 +56,17 @@ func parseFileToArray(text string) []wordFreq {
 	return arrayWordFreq
 }
 
-func addWordToTrie(text string, root *Tree) *Tree {
+func addWordToTrie(text *string, root *Tree) *Tree {
 	var first int = 0
 
 	for first != -1 {
-		last := strings.IndexByte(text[first:], 10) + first
+		last := strings.IndexByte((*text)[first:], 10) + first
 
 		if (last == first - 1) {
 			break
 		}
 
-		fields := strings.Fields(text[first:last])
+		fields := strings.Fields((*text)[first:last])
 		if len(fields) < 1 {
 			continue
 		}
