@@ -152,16 +152,6 @@ func (t *Tree) Insert(s string, v rune) (interface{}, bool) {
 		// No edge, create one
 		if n == nil {
 
-			// e := edge{
-			// 	label: search[0],
-			// 	node: &node{
-			// 		Leaf: &leafNode{
-			// 			Key: s,
-			// 			Val: v,
-			// 		},
-			// 		Prefix: search,
-			// 	},
-			// }
 			parent.addEdge(&node{
 					Leaf: &leafNode{
 						Key: s,
@@ -184,18 +174,7 @@ func (t *Tree) Insert(s string, v rune) (interface{}, bool) {
 			Prefix: search[:commonPrefix],
 		}
 
-		// parent.replaceEdge(edge{
-		// 	label: search[0],
-		// 	node:  child,
-		// })
-
 		parent.replaceEdge(child)
-
-		// Restore the existing node
-		// child.addEdge(edge{
-		// 	label: n.Prefix[commonPrefix],
-		// 	node:  n,
-		// })
 
 		child.addEdge(n)
 		n.Prefix = n.Prefix[commonPrefix:]
@@ -213,14 +192,6 @@ func (t *Tree) Insert(s string, v rune) (interface{}, bool) {
 			return nil, false
 		}
 
-		// Create a new edge for the node
-		// child.addEdge(edge{
-		// 	label: search[0],
-		// 	node: &node{
-		// 		Leaf:   Leaf,
-		// 		Prefix: search,
-		// 	},
-		// })
 
 		child.addEdge(&node{
 				Leaf:   Leaf,
@@ -229,14 +200,6 @@ func (t *Tree) Insert(s string, v rune) (interface{}, bool) {
 		return nil, false
 	}
 }
-
-// func (n *node) mergeChild() {
-// 	e := n.Edges[0]
-// 	child := e.node
-// 	n.Prefix = n.Prefix + child.Prefix
-// 	n.Leaf = child.Leaf
-// 	n.Edges = child.Edges
-// }
 
 // Get is used to lookup a specific Key, returning
 // the Value and if it was found
@@ -304,37 +267,37 @@ func (t *Tree) LongestPrefix(s string) (string, interface{}, bool) {
 	return "", nil, false
 }
 
-// Minimum is used to return the minimum Value in the tree
-// func (t *Tree) Minimum() (string, interface{}, bool) {
-// 	n := t.Root
-// 	for {
-// 		if n.isLeaf() {
-// 			return n.Leaf.Key, n.Leaf.Val, true
-// 		}
-// 		if len(n.Edges) > 0 {
-// 			n = n.Edges[0].node
-// 		} else {
-// 			break
-// 		}
-// 	}
-// 	return "", nil, false
-// }
+//Minimum is used to return the minimum Value in the tree
+//func (t *Tree) Minimum() (string, interface{}, bool) {
+//	n := t.Root
+//	for {
+//		if n.isLeaf() {
+//			return n.Leaf.Key, n.Leaf.Val, true
+//		}
+//		if len(n.Edges) > 0 {
+//			n = n.Edges[0].node
+//		} else {
+//			break
+//		}
+//	}
+//	return "", nil, false
+//}
 
-// Maximum is used to return the maximum Value in the tree
-// func (t *Tree) Maximum() (string, interface{}, bool) {
-// 	n := t.Root
-// 	for {
-// 		if num := len(n.Edges); num > 0 {
-// 			n = n.Edges[num-1].node
-// 			continue
-// 		}
-// 		if n.isLeaf() {
-// 			return n.Leaf.Key, n.Leaf.Val, true
-// 		}
-// 		break
-// 	}
-// 	return "", nil, false
-// }
+//Maximum is used to return the maximum Value in the tree
+//func (t *Tree) Maximum() (string, interface{}, bool) {
+//	n := t.Root
+//	for {
+//		if num := len(n.Edges); num > 0 {
+//			n = n.Edges[num-1].node
+//			continue
+//		}
+//		if n.isLeaf() {
+//			return n.Leaf.Key, n.Leaf.Val, true
+//		}
+//		break
+//	}
+//	return "", nil, false
+//}
 
 // Walk is used to walk the tree
 func (t *Tree) Walk(fn WalkFn) {
@@ -432,3 +395,4 @@ func (t *Tree) ToMap() map[string]rune {
 	})
 	return out
 }
+
