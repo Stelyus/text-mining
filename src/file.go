@@ -3,8 +3,10 @@ package main
 import (
 	"strings"
 	"strconv"
-	// "fmt"
+	"fmt"
 	"io/ioutil"
+	"encoding/gob"
+    "os"
 )
 
 type wordFreq struct {
@@ -26,44 +28,18 @@ func readFile(path string) string {
 
 
 /*
-	Split a text into an array of (word (string), freq (int))
-
-	Ex:
-	
-	diieu	2337
-	diieux	327
-
-	[(diieu, 2337), (diieux, 327)]
+	Parse text and create a Radix tree
+	Return the radix tree created
 */
-
-func parseFileToArray(text string) []wordFreq {
-	arr := strings.Split(text, "\n")
-	var arrayWordFreq []wordFreq
-
-	for i := 0; i < len(arr); i++ {
-		fields := strings.Fields(arr[i])
-		if len(fields) < 1 {
-			continue
-		}
-
-		freq, err := strconv.Atoi(fields[1])
-		if err != nil {
-			panic(err)
-		}
-		arrayWordFreq = append(arrayWordFreq, wordFreq {word: fields[0], freq: freq})
-	}
-	
-	return arrayWordFreq
-}
 
 func addWordToTrie(text *string, root *Tree) *Tree {
 	var first int = 0
 
-	for first != -1 {
+	for first < len(*text) {
 		last := strings.IndexByte((*text)[first:], 10) + first
 
 		if (last == first - 1) {
-			break
+			last = len(*text)						
 		}
 
 		fields := strings.Fields((*text)[first:last])
@@ -82,4 +58,38 @@ func addWordToTrie(text *string, root *Tree) *Tree {
 	}
 
 	return root
+}
+
+
+/*
+	Serialize the tree into a dict.bin
+*/
+
+func serialize(node *Tree, path string) {
+	encodeFile, _ := os.Create(path)
+
+	err := gob.NewEncoder(encodeFile).Encode(*node)
+
+	if err != nil {
+	    fmt.Println("Encode:", err)
+	    return
+	}
+
+	encodeFile.Close()
+
+
+	// Decode
+	// newNode := &Tree{}
+
+	// decodeFile, _ := os.Open("dict_berthang.bin")
+	// err = gob.NewDecoder(decodeFile).Decode(newNode)
+	// if err != nil {
+	//     fmt.Println("Decode:", err)
+	//     return
+	// }
+
+	// fmt.Println("New value:", newNode)
+	// fmt.Println(newNode.Root.Edges[1].Edges[1].Leaf.Key)
+
+
 }
