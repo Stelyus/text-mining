@@ -23,22 +23,11 @@ func maxI(a int, b int) (res int) {
 }
 
 func DamerauLevenshtein(s1 string, s2 string) (distance int) {
-	// index by code point, not byte
 	r1 := []rune(s1)
 	r2 := []rune(s2)
 
 	// the maximum possible distance
 	inf := len(r1) + len(r2)
-
-	// if one string is blank, we needs insertions
-	// for all characters in the other one
-	if len(r1) == 0 {
-		return len(r2)
-	}
-
-	if len(r2) == 0 {
-		return len(r1)
-	}
 
 	// construct the edit-tracking matrix
 	matrix := make([][]int, len(r1))
