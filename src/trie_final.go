@@ -1,15 +1,15 @@
 package main
 
 type TrieNode struct {
-	val rune
-	freq int
-	children map[rune]*TrieNode
+	Val rune
+	Freq int
+	Children map[rune]*TrieNode
 }
 
 
 // Creates a new TrieNode as  root.
 func NewTrie() *TrieNode {
-	return &TrieNode{children: make(map[rune]*TrieNode)}
+	return &TrieNode{Children: make(map[rune]*TrieNode)}
 }
 
 
@@ -18,7 +18,7 @@ func (root *TrieNode) Add(key string, freq int) *TrieNode {
 	node := root
 	for i := range runes {
 		r := runes[i]
-		if n, ok := node.children[r]; ok {
+		if n, ok := node.Children[r]; ok {
 			node = n
 		} else {
 			if i == len(runes) - 1 {
@@ -32,9 +32,6 @@ func (root *TrieNode) Add(key string, freq int) *TrieNode {
 	return node
 }
 
-func (n TrieNode) Children() map[rune]*TrieNode {
-	return n.children
-}
 
 func (root *TrieNode) Find(key string) (*TrieNode, bool) {
 	node := findTrieNode(root, []rune(key))
@@ -48,11 +45,11 @@ func (root *TrieNode) Find(key string) (*TrieNode, bool) {
 // Creates and returns a pointer to a new child for the node.
 func (n *TrieNode) NewNode(val rune, freq int) *TrieNode {
 	node := &TrieNode{
-		val:      val,
-		freq: freq,
-		children: make(map[rune]*TrieNode),
+		Val:      val,
+		Freq: freq,
+		Children: make(map[rune]*TrieNode),
 	}
-	n.children[val] = node
+	n.Children[val] = node
 	return node
 }
 
@@ -65,7 +62,7 @@ func findTrieNode(node *TrieNode, runes []rune) *TrieNode {
 		return node
 	}
 
-	n, ok := node.children[runes[0]]
+	n, ok := node.Children[runes[0]]
 	if !ok {
 		return nil
 	}
