@@ -65,7 +65,7 @@ func addWordToTrie(text *string, root *Tree) *Tree {
 	Serialize the tree into a dict.bin
 */
 
-func serialize(node *Tree, path string) {
+func serialize1(node *Tree, path string) {
 	encodeFile, _ := os.Create(path)
 
 	err := gob.NewEncoder(encodeFile).Encode(*node)

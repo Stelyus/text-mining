@@ -18,10 +18,12 @@ type leafNode struct {
 
 type node struct {
 	// Leaf is used to store possible Leaf
-	Leaf *leafNode
+	// Leaf *leafNode
 
 	// Prefix is the common Prefix we ignore
 	Prefix string
+	Val rune
+	Key string
 
 	// Edges should be stored in-order for iteration.
 	// We avoid a fully materialized slice to save memory,
@@ -30,7 +32,7 @@ type node struct {
 }
 
 func (n *node) isLeaf() bool {
-	return n.Leaf != nil
+	return n.Val != -1
 }
 
 func (n *node) addEdge(newNode *node) {
@@ -98,7 +100,9 @@ func NewRadix() *Tree {
 // NewFromMap returns a new tree containing the Keys
 // from an existing map
 func NewFromMap(m map[string]rune) *Tree {
-	t := &Tree{Root: &node{}}
+	t := &Tree{Root: &node{
+		Val: -1,
+	}}
 	for k, v := range m {
 		t.Insert(k, v)
 	}
@@ -133,15 +137,13 @@ func (t *Tree) Insert(s string, v rune) (interface{}, bool) {
 		// Handle Key exhaution
 		if len(search) == 0 {
 			if n.isLeaf() {
-				old := n.Leaf.Val
-				n.Leaf.Val = v
+				old := n.Val
+				n.Val = v
 				return old, true
 			}
 
-			n.Leaf = &leafNode{
-				Key: s,
-				Val: v,
-			}
+			n.Key = s
+			n.Val = v
 			return nil, false
 		}
 
@@ -153,10 +155,8 @@ func (t *Tree) Insert(s string, v rune) (interface{}, bool) {
 		if n == nil {
 
 			parent.addEdge(&node{
-					Leaf: &leafNode{
-						Key: s,
-						Val: v,
-					},
+					Key: s,
+					Val: v,
 					Prefix: search,
 			})
 			return nil, false
@@ -172,6 +172,7 @@ func (t *Tree) Insert(s string, v rune) (interface{}, bool) {
 		// Split the node
 		child := &node{
 			Prefix: search[:commonPrefix],
+			Val: -1,
 		}
 
 		parent.replaceEdge(child)
@@ -180,21 +181,19 @@ func (t *Tree) Insert(s string, v rune) (interface{}, bool) {
 		n.Prefix = n.Prefix[commonPrefix:]
 
 		// Create a new Leaf node
-		Leaf := &leafNode{
-			Key: s,
-			Val: v,
-		}
-
+		
 		// If the new Key is a subset, add to to this node
 		search = search[commonPrefix:]
 		if len(search) == 0 {
-			child.Leaf = Leaf
+			child.Key = s
+			child.Val = v
 			return nil, false
 		}
 
 
 		child.addEdge(&node{
-				Leaf:   Leaf,
+				Key: s,
+				Val: v,
 				Prefix: search,
 		})
 		return nil, false
@@ -210,7 +209,7 @@ func (t *Tree) Get(s string) (interface{}, bool) {
 		// Check for Key exhaution
 		if len(search) == 0 {
 			if n.isLeaf() {
-				return n.Leaf.Val, true
+				return n.Val, true
 			}
 			break
 		}
@@ -234,13 +233,13 @@ func (t *Tree) Get(s string) (interface{}, bool) {
 // LongestPrefix is like Get, but instead of an
 // exact match, it will return the longest Prefix match.
 func (t *Tree) LongestPrefix(s string) (string, interface{}, bool) {
-	var last *leafNode
+	var last *node
 	n := t.Root
 	search := s
 	for {
 		// Look for a Leaf node
 		if n.isLeaf() {
-			last = n.Leaf
+			last = n
 		}
 
 		// Check for Key exhaution
@@ -345,7 +344,7 @@ func (t *Tree) WalkPath(path string, fn WalkFn) {
 	search := path
 	for {
 		// Visit the Leaf Values if any
-		if n.Leaf != nil && fn(n.Leaf.Key, n.Leaf.Val) {
+		if n.isLeaf() && fn(n.Key, n.Val) {
 			return
 		}
 
@@ -373,7 +372,7 @@ func (t *Tree) WalkPath(path string, fn WalkFn) {
 // recursively. Returns true if the walk should be aborted
 func recursiveWalk(n *node, fn WalkFn) bool {
 	// Visit the Leaf Values if any
-	if n.Leaf != nil && fn(n.Leaf.Key, n.Leaf.Val) {
+	if n.isLeaf() && fn(n.Key, n.Val) {
 		return true
 	}
 
