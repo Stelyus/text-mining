@@ -125,15 +125,17 @@ func getwords(n *Tree, word string, distance int) map[string]rune{
 func recursives(n *node, s string, distance int, check string){
 	fmt.Println("--------------------------")
 	fmt.Println("recursive call on:", check)
-	if n.isLeaf()  && !checkDamerau(s, n.Key, distance ) {
-		out[n.Key] = n.Val
-		return
+	if n.isLeaf() {
+		fmt.Println("checking leaf", n.Key)
+		if DamerauLevenshtein(s, n.Key) <= distance {
+			out[n.Key] = n.Val
+		}
 	}
+
 	for _, f := range n.Edges{
-		if checkDamerau(s, check + f.Prefix, distance){
-			return
-		}else{
+		if !checkDamerau(s, check + f.Prefix, distance){
 			recursives(f, s, distance, check + f.Prefix)
 		}
 	}
+	fmt.Println("==============", check)
 }
