@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"io/ioutil"
 	"encoding/gob"
+	"encoding/binary"
     "os"
+	"bytes"
 )
 
 type wordFreq struct {
@@ -65,31 +67,111 @@ func addWordToTrie(text *string, root *Tree) *Tree {
 	Serialize the tree into a dict.bin
 */
 
-func serialize1(node *Tree, path string) {
-	encodeFile, _ := os.Create(path)
+func serialize(root *Tree, path string) {
+	var readerBuf bytes.Buffer;
+	encoder := gob.NewEncoder(&readerBuf)
 
-	err := gob.NewEncoder(encodeFile).Encode(*node)
+	os.Remove(path)
+	f, _ := os.OpenFile(path, os.O_CREATE|os.O_WRONLY, 0644)
 
-	if err != nil {
-	    fmt.Println("Encode:", err)
-	    return
+	// WRITE TWO BYTES
+	bs := make([]byte, 2)
+    binary.LittleEndian.PutUint16(bs, uint16(len(root.Root.Edges)))
+    f.Write(bs)
+
+    // WRITE 4 * LEN EDGES BYTES
+	bs1 := make([]byte, len(root.Root.Edges) * 4)
+    f.Write(bs1)
+
+
+
+	sizePerEdges := make([]int, 0)
+	
+	for i := 0; i < len(root.Root.Edges); i++ {
+		
+		err := encoder.Encode(root.Root.Edges[i])
+
+		if err != nil {
+			f.Close()
+			panic(err)
+		}
+
+		sizePerEdges = append(sizePerEdges, readerBuf.Len())
+		f.Write(readerBuf.Bytes())
+		readerBuf.Reset()
 	}
 
-	encodeFile.Close()
+
+    var i int64
+
+    for i = 0; i < int64(len(sizePerEdges)); i++ {
+		bs := make([]byte, 4)
+    	binary.LittleEndian.PutUint32(bs, uint32(sizePerEdges[i]))
+    	f.WriteAt(bs, (i * 4) + 2)
+    }
 
 
-	// Decode
-	// newNode := &Tree{}
+	f.Close()
+}
 
-	// decodeFile, _ := os.Open("dict_berthang.bin")
-	// err = gob.NewDecoder(decodeFile).Decode(newNode)
-	// if err != nil {
-	//     fmt.Println("Decode:", err)
-	//     return
-	// }
+func deserialize(path string) {
 
-	// fmt.Println("New value:", newNode)
-	// fmt.Println(newNode.Root.Edges[1].Edges[1].Leaf.Key)
+	trie := NewRadix()
 
 
+	/*
+		Calcul du nombre d'edge (2 premier bytes)
+	*/
+
+	numberEdgesByte := make([]byte, 2)
+	f, err := os.Open(path)
+	check(err)
+
+	_, err1 := f.Read(numberEdgesByte)
+    check(err1)
+    numberEdges := binary.LittleEndian.Uint16(numberEdgesByte)
+
+
+    /*
+		Pour chaque edge, calcul la taille de chaque node en byte
+    */
+
+    sizePerEdges := make([]uint32, 0)
+
+    var i uint16
+    for i = 0; i < numberEdges; i++ {
+    	bs := make([]byte, 4)
+    	f.Read(bs)
+    	sizePerEdges = append(sizePerEdges, binary.LittleEndian.Uint32(bs))
+    }
+
+
+    /*
+		Creation de l'arbre
+    */
+
+	var readerBuf bytes.Buffer
+	decoder := gob.NewDecoder(&readerBuf)
+
+
+    for i := 0; i < len(sizePerEdges); i++ {
+    	readerBuf.Grow(int(sizePerEdges[i]))
+    	bs := make([]byte, sizePerEdges[i])
+
+    	node := &node{}
+    	f.Read(bs)
+    	readerBuf.Write(bs)
+    	decoder.Decode(node)
+    	readerBuf.Reset()
+    	trie.Root.addEdge(node)
+    }
+
+    fmt.Println("Deserialization done")
+    f.Close()
+}
+
+func check(e error) {
+    if e != nil {
+        panic(e)
+    }
 }
