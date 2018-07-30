@@ -1,5 +1,8 @@
 package main
 
+import "fmt"
+
+var out = make(map[string]rune)
 // min of two integers
 func min(a int, b int) (res int) {
 	if a < b {
@@ -110,15 +113,27 @@ func DamerauLevenshtein(s1 string, s2 string) (distance int) {
 	return matrix[len(r1)-1][len(r2)-1]
 }
 
+
 func getwords(n *Tree, word string, distance int) map[string]rune{
-	out := make(map[string]rune)
-	fn := func(s string, v rune) bool {
-		d := DamerauLevenshtein(s, word)
-		if d < distance{
-			out[s] = v
-		}
-		return false
+	for _, f := range n.Root.Edges{
+		recursives(f, word, distance, f.Prefix)
 	}
-	n.Walk(fn)
+	
 	return out
+}
+
+func recursives(n *node, s string, distance int, check string){
+	fmt.Println("--------------------------")
+	fmt.Println("recursive call on:", check)
+	if n.Leaf != nil && !checkDamerau(s, n.Leaf.Key, distance ) {
+		out[n.Leaf.Key] = n.Leaf.Val
+		return
+	}
+	for _, f := range n.Edges{
+		if checkDamerau(s, check + f.Prefix, distance){
+			return
+		}else{
+			recursives(f, s, distance, check + f.Prefix)
+		}
+	}
 }

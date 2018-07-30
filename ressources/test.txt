@@ -1,12 +1,15 @@
 salut	705
 test	695
 salto	2014
+salot   1234
+salte   1234
 testo	758
 arabie	810
 arabier 111
+aboutabbathaga 345
 franck	69619
-berthier	5349
-berthang	569
+berthier 5349
+berthang 569
 sale	763
 tetoi	521
 toison	608

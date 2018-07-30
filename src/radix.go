@@ -3,7 +3,13 @@ package main
 import (
 	"sort"
 	"strings"
+	"fmt"
 )
+
+func abs(n int64) int64 {
+	y := n >> 63
+	return (n ^ y) - y
+}
 
 // WalkFn is used when walking the tree. Takes a
 // Key and Value, returning if iteration should
@@ -395,3 +401,25 @@ func (t *Tree) ToMap() map[string]rune {
 	return out
 }
 
+func checkDamerau(s string, s2 string, distance int) bool{
+	fmt.Println(s, s2, distance)
+	if len(s2) - len(s) > distance {
+		//fmt.Println("length > distance", len(s), len(s2))
+		return true
+	}
+	mini := min(len(s), len(s2))
+	if s2 != "" {
+		if len(s) > mini {
+			s = s[:mini]
+		} else {
+			s2 = s2[:mini]
+		}
+
+		fmt.Println("prefixe:", s, s2)
+		d := DamerauLevenshtein(s, s2)
+		fmt.Println("distance is:", d)
+		fmt.Println("---")
+		return !(d <= distance)
+	}
+	return false
+}

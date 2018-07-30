@@ -18,6 +18,7 @@ func main() {
 	trie = addWordToTrie(&str, trie)
 
 	out := getwords(trie, word, distance)
+
 	fmt.Println(out)
 	// fmt.Println(trie.Root.Edges[3].Edges[1].Prefix)
 	// fmt.Println(trie.Root.Edges[3].Edges[1].Val)
