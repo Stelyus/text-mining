@@ -16,12 +16,6 @@ func abs(n int64) int64 {
 // be terminated.
 type WalkFn func(s string, v rune) bool
 
-// leafNode is used to represent a Value
-type leafNode struct {
-	Key string
-	Val rune
-}
-
 type node struct {
 	// Leaf is used to store possible Leaf
 	// Leaf *leafNode
