@@ -236,142 +236,9 @@ func (t *Tree) Get(s string) (interface{}, bool) {
 	return nil, false
 }
 
-// LongestPrefix is like Get, but instead of an
-// exact match, it will return the longest Prefix match.
-func (t *Tree) LongestPrefix(s string) (string, interface{}, bool) {
-	var last *node
-	n := t.Root
-	search := s
-	for {
-		// Look for a Leaf node
-		if n.isLeaf() {
-			last = n
-		}
-
-		// Check for Key exhaution
-		if len(search) == 0 {
-			break
-		}
-
-		// Look for an edge
-		n = n.getEdge(search[0])
-		if n == nil {
-			break
-		}
-
-		// Consume the search Prefix
-		if strings.HasPrefix(search, n.Prefix) {
-			search = search[len(n.Prefix):]
-		} else {
-			break
-		}
-	}
-	if last != nil {
-		return last.Key, last.Val, true
-	}
-	return "", nil, false
-}
-
-//Minimum is used to return the minimum Value in the tree
-//func (t *Tree) Minimum() (string, interface{}, bool) {
-//	n := t.Root
-//	for {
-//		if n.isLeaf() {
-//			return n.Leaf.Key, n.Leaf.Val, true
-//		}
-//		if len(n.Edges) > 0 {
-//			n = n.Edges[0].node
-//		} else {
-//			break
-//		}
-//	}
-//	return "", nil, false
-//}
-
-//Maximum is used to return the maximum Value in the tree
-//func (t *Tree) Maximum() (string, interface{}, bool) {
-//	n := t.Root
-//	for {
-//		if num := len(n.Edges); num > 0 {
-//			n = n.Edges[num-1].node
-//			continue
-//		}
-//		if n.isLeaf() {
-//			return n.Leaf.Key, n.Leaf.Val, true
-//		}
-//		break
-//	}
-//	return "", nil, false
-//}
-
 // Walk is used to walk the tree
 func (t *Tree) Walk(fn WalkFn) {
 	recursiveWalk(t.Root, fn)
-}
-
-// WalkPrefix is used to walk the tree under a Prefix
-func (t *Tree) WalkPrefix(Prefix string, fn WalkFn) {
-	n := t.Root
-	search := Prefix
-	for {
-		// Check for Key exhaution
-		if len(search) == 0 {
-			recursiveWalk(n, fn)
-			return
-		}
-
-		// Look for an edge
-		n = n.getEdge(search[0])
-		if n == nil {
-			break
-		}
-
-		// Consume the search Prefix
-		if strings.HasPrefix(search, n.Prefix) {
-			search = search[len(n.Prefix):]
-
-		} else if strings.HasPrefix(n.Prefix, search) {
-			// Child may be under our search Prefix
-			recursiveWalk(n, fn)
-			return
-		} else {
-			break
-		}
-	}
-
-}
-
-// WalkPath is used to walk the tree, but only visiting nodes
-// from the Root down to a given Leaf. Where WalkPrefix walks
-// all the entries *under* the given Prefix, this walks the
-// entries *above* the given Prefix.
-func (t *Tree) WalkPath(path string, fn WalkFn) {
-	n := t.Root
-	search := path
-	for {
-		// Visit the Leaf Values if any
-		if n.isLeaf() && fn(n.Key, n.Val) {
-			return
-		}
-
-		// Check for Key exhaution
-		if len(search) == 0 {
-			return
-		}
-
-		// Look for an edge
-		n = n.getEdge(search[0])
-		if n == nil {
-			return
-		}
-
-		// Consume the search Prefix
-		if strings.HasPrefix(search, n.Prefix) {
-			search = search[len(n.Prefix):]
-		} else {
-			break
-		}
-	}
 }
 
 // recursiveWalk is used to do a pre-order walk of a node
@@ -391,35 +258,44 @@ func recursiveWalk(n *node, fn WalkFn) bool {
 	return false
 }
 
-// ToMap is used to walk the tree and convert it into a map
-func (t *Tree) ToMap() map[string]rune {
-	out := make(map[string]rune)
-	t.Walk(func(k string, v rune) bool {
-		out[k] = v
-		return false
-	})
-	return out
-}
 
-func checkDamerau(s string, s2 string, distance int) bool{
-	fmt.Println(s, s2, distance)
-	if len(s2) - len(s) > distance {
-		//fmt.Println("length > distance", len(s), len(s2))
+func checkDamerau(ref string, currentWord string, distance int, isleaf bool) bool{
+
+	//fmt.Println(ref, currentWord, distance)
+	// check if length of the current word doesn't go way over distance
+	if len(currentWord) - len(ref) > distance {
 		return true
 	}
-	mini := min(len(s), len(s2))
-	if s2 != "" {
-		if len(s) > mini {
-			s = s[:mini]
+
+	if currentWord != "" {
+		d := 0
+		// get the length of the current prefix
+		mini := min(len(ref), len(currentWord))
+
+		if len(ref) > mini {
+			// check the prefix of the ref and the suffix to correctly check for damerau leveisntein distance
+			prefix := ref[:mini]
+			suffix := ref[1 : mini+1]
+			if strings.Contains(currentWord, "nai") {
+				fmt.Println("prefixe2:", prefix, suffix, currentWord)
+
+			}
+			d = min(DamerauLevenshtein(prefix, currentWord), DamerauLevenshtein(suffix, currentWord))
 		} else {
-			s2 = s2[:mini]
+			currentWord = currentWord[:mini]
+			d = DamerauLevenshtein(ref, currentWord)
 		}
 
-		fmt.Println("prefixe:", s, s2)
-		d := DamerauLevenshtein(s, s2)
+		d = min(d, DamerauLevenshtein(ref, currentWord))
+		if strings.Contains(currentWord, "nai") {
+
+		fmt.Println("prefixe:", ref, currentWord)
 		fmt.Println("distance is:", d)
 		fmt.Println("---")
+		}
 		return !(d <= distance)
 	}
 	return false
 }
+
+

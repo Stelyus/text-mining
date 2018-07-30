@@ -115,6 +115,8 @@ func DamerauLevenshtein(s1 string, s2 string) (distance int) {
 
 
 func getwords(n *Tree, word string, distance int) map[string]rune{
+	//currentRow := makeRange(0, len(word) + 1)
+
 	for _, f := range n.Root.Edges{
 		recursives(f, word, distance, f.Prefix)
 	}
@@ -133,9 +135,50 @@ func recursives(n *node, s string, distance int, check string){
 	}
 
 	for _, f := range n.Edges{
-		if !checkDamerau(s, check + f.Prefix, distance){
+		if !checkDamerau(s, check + f.Prefix, distance, f.isLeaf()){
 			recursives(f, s, distance, check + f.Prefix)
 		}
 	}
 	fmt.Println("==============", check)
 }
+
+func makeRange(min, max int) []int {
+	a := make([]int, max-min+1)
+	for i := range a {
+		a[i] = min + i
+	}
+	return a
+}
+
+//# This recursive helper is used by the search function above. It assumes that
+//# the previousRow has been filled in already.
+//func searchRecursive(node *node, letter string, word string, previousRow []int, results []int, maxCost int){
+// colums := makeRange(0, len(word) + 1)
+//
+//}
+//currentRow = [ previousRow[0] + 1 ]
+
+//# Build one row for the letter, with a column for each letter in the target
+//# word, plus one for the empty string at column 0
+//for column in xrange( 1, columns ):
+//	insertCost = currentRow[column - 1] + 1
+//	deleteCost = previousRow[column] + 1
+//
+//	if word[column - 1] != letter:
+//		replaceCost = previousRow[ column - 1 ] + 1
+//	else:
+//		replaceCost = previousRow[ column - 1 ]
+//
+//	currentRow.append( min( insertCost, deleteCost, replaceCost ) )
+
+//# if the last entry in the row indicates the optimal cost is less than the
+//# maximum cost, and there is a word in this trie node, then add it.
+//if currentRow[-1] <= maxCost and node.word != None:
+//	out[node.Key] = currentRow[-1]
+
+//# if any entries in the row are less than the maximum cost, then
+//# recursively search each branch of the trie
+//if min( currentRow ) <= maxCost:
+//	for letter in node.children:
+//		searchRecursive( node.children[letter], letter, word, currentRow, results, maxCost )
+
