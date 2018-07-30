@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+	"radix"
+)
 
 var out = make(map[string]rune)
 // min of two integers
@@ -114,7 +118,7 @@ func DamerauLevenshtein(s1 string, s2 string) (distance int) {
 }
 
 
-func getwords(n *Tree, word string, distance int) map[string]rune{
+func getwords(n *radix.Tree, word string, distance int) map[string]rune{
 	//currentRow := makeRange(0, len(word) + 1)
 
 	for _, f := range n.Root.Edges{
@@ -124,10 +128,10 @@ func getwords(n *Tree, word string, distance int) map[string]rune{
 	return out
 }
 
-func recursives(n *node, s string, distance int, check string){
+func recursives(n *radix.Node, s string, distance int, check string){
 	fmt.Println("--------------------------")
 	fmt.Println("recursive call on:", check)
-	if n.isLeaf() {
+	if n.IsLeaf() {
 		fmt.Println("checking leaf", n.Key)
 		if DamerauLevenshtein(s, n.Key) <= distance {
 			out[n.Key] = n.Val
@@ -135,7 +139,7 @@ func recursives(n *node, s string, distance int, check string){
 	}
 
 	for _, f := range n.Edges{
-		if !checkDamerau(s, check + f.Prefix, distance, f.isLeaf()){
+		if !checkDamerau(s, check + f.Prefix, distance, f.IsLeaf()){
 			recursives(f, s, distance, check + f.Prefix)
 		}
 	}
@@ -182,3 +186,41 @@ func makeRange(min, max int) []int {
 //	for letter in node.children:
 //		searchRecursive( node.children[letter], letter, word, currentRow, results, maxCost )
 
+func checkDamerau(ref string, currentWord string, distance int, isleaf bool) bool{
+
+	//fmt.Println(ref, currentWord, distance)
+	// check if length of the current word doesn't go way over distance
+	if len(currentWord) - len(ref) > distance {
+		return true
+	}
+
+	if currentWord != "" {
+		d := 0
+		// get the length of the current prefix
+		mini := min(len(ref), len(currentWord))
+
+		if len(ref) > mini {
+			// check the prefix of the ref and the suffix to correctly check for damerau leveisntein distance
+			prefix := ref[:mini]
+			suffix := ref[1 : mini+1]
+			if strings.Contains(currentWord, "nai") {
+				fmt.Println("prefixe2:", prefix, suffix, currentWord)
+
+			}
+			d = min(DamerauLevenshtein(prefix, currentWord), DamerauLevenshtein(suffix, currentWord))
+		} else {
+			currentWord = currentWord[:mini]
+			d = DamerauLevenshtein(ref, currentWord)
+		}
+
+		d = min(d, DamerauLevenshtein(ref, currentWord))
+		if strings.Contains(currentWord, "nai") {
+
+		fmt.Println("prefixe:", ref, currentWord)
+		fmt.Println("distance is:", d)
+		fmt.Println("---")
+		}
+		return !(d <= distance)
+	}
+	return false
+}

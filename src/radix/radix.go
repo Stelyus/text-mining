@@ -1,9 +1,8 @@
-package main
+package radix
 
 import (
 	"sort"
 	"strings"
-	"fmt"
 )
 
 func abs(n int64) int64 {
@@ -16,7 +15,7 @@ func abs(n int64) int64 {
 // be terminated.
 type WalkFn func(s string, v rune) bool
 
-type node struct {
+type Node struct {
 	// Leaf is used to store possible Leaf
 	// Leaf *leafNode
 
@@ -31,17 +30,17 @@ type node struct {
 	Edges edges
 }
 
-func (n *node) isLeaf() bool {
+func (n *Node) IsLeaf() bool {
 	return n.Val != -1
 }
 
-func (n *node) addEdge(newNode *node) {
+func (n *Node) AddEdge(newNode *Node) {
 	n.Edges = append(n.Edges, newNode)
 	n.Edges.Sort()
 }
 
 
-func (n *node) replaceEdge(newNode *node) {
+func (n *Node) replaceEdge(newNode *Node) {
 	num := len(n.Edges)
 	idx := sort.Search(num, func(i int) bool {
 		return n.Edges[i].Prefix[0] >= newNode.Prefix[0]
@@ -54,7 +53,7 @@ func (n *node) replaceEdge(newNode *node) {
 	panic("replacing missing edge")
 }
 
-func (n *node) getEdge(label byte) *node {
+func (n *Node) getEdge(label byte) *Node {
 	num := len(n.Edges)
 	idx := sort.Search(num, func(i int) bool {
 		return n.Edges[i].Prefix[0] >= label
@@ -66,7 +65,7 @@ func (n *node) getEdge(label byte) *node {
 	return nil
 }
 
-type edges []*node
+type edges []*Node
 
 func (e edges) Len() int {
 	return len(e)
@@ -89,7 +88,7 @@ func (e edges) Sort() {
 // a standard hash map is Prefix-based lookups and
 // ordered iteration,
 type Tree struct {
-	Root *node
+	Root *Node
 }
 
 // New returns an empty Tree
@@ -100,7 +99,7 @@ func NewRadix() *Tree {
 // NewFromMap returns a new tree containing the Keys
 // from an existing map
 func NewFromMap(m map[string]rune) *Tree {
-	t := &Tree{Root: &node{
+	t := &Tree{Root: &Node{
 		Val: -1,
 	}}
 	for k, v := range m {
@@ -130,13 +129,13 @@ func longestPrefix(k1, k2 string) int {
 // Insert is used to add a newentry or update
 // an existing entry. Returns if updated.
 func (t *Tree) Insert(s string, v rune) (interface{}, bool) {
-	var parent *node
+	var parent *Node
 	n := t.Root
 	search := s
 	for {
 		// Handle Key exhaution
 		if len(search) == 0 {
-			if n.isLeaf() {
+			if n.IsLeaf() {
 				old := n.Val
 				n.Val = v
 				return old, true
@@ -154,7 +153,7 @@ func (t *Tree) Insert(s string, v rune) (interface{}, bool) {
 		// No edge, create one
 		if n == nil {
 
-			parent.addEdge(&node{
+			parent.AddEdge(&Node{
 					Key: s,
 					Val: v,
 					Prefix: search,
@@ -169,20 +168,20 @@ func (t *Tree) Insert(s string, v rune) (interface{}, bool) {
 			continue
 		}
 
-		// Split the node
-		child := &node{
+		// Split the Node
+		child := &Node{
 			Prefix: search[:commonPrefix],
 			Val: -1,
 		}
 
 		parent.replaceEdge(child)
 
-		child.addEdge(n)
+		child.AddEdge(n)
 		n.Prefix = n.Prefix[commonPrefix:]
 
-		// Create a new Leaf node
+		// Create a new Leaf Node
 		
-		// If the new Key is a subset, add to to this node
+		// If the new Key is a subset, add to to this Node
 		search = search[commonPrefix:]
 		if len(search) == 0 {
 			child.Key = s
@@ -191,7 +190,7 @@ func (t *Tree) Insert(s string, v rune) (interface{}, bool) {
 		}
 
 
-		child.addEdge(&node{
+		child.AddEdge(&Node{
 				Key: s,
 				Val: v,
 				Prefix: search,
@@ -208,7 +207,7 @@ func (t *Tree) Get(s string) (interface{}, bool) {
 	for {
 		// Check for Key exhaution
 		if len(search) == 0 {
-			if n.isLeaf() {
+			if n.IsLeaf() {
 				return n.Val, true
 			}
 			break
@@ -235,11 +234,11 @@ func (t *Tree) Walk(fn WalkFn) {
 	recursiveWalk(t.Root, fn)
 }
 
-// recursiveWalk is used to do a pre-order walk of a node
+// recursiveWalk is used to do a pre-order walk of a Node
 // recursively. Returns true if the walk should be aborted
-func recursiveWalk(n *node, fn WalkFn) bool {
+func recursiveWalk(n *Node, fn WalkFn) bool {
 	// Visit the Leaf Values if any
-	if n.isLeaf() && fn(n.Key, n.Val) {
+	if n.IsLeaf() && fn(n.Key, n.Val) {
 		return true
 	}
 
@@ -251,45 +250,3 @@ func recursiveWalk(n *node, fn WalkFn) bool {
 	}
 	return false
 }
-
-
-func checkDamerau(ref string, currentWord string, distance int, isleaf bool) bool{
-
-	//fmt.Println(ref, currentWord, distance)
-	// check if length of the current word doesn't go way over distance
-	if len(currentWord) - len(ref) > distance {
-		return true
-	}
-
-	if currentWord != "" {
-		d := 0
-		// get the length of the current prefix
-		mini := min(len(ref), len(currentWord))
-
-		if len(ref) > mini {
-			// check the prefix of the ref and the suffix to correctly check for damerau leveisntein distance
-			prefix := ref[:mini]
-			suffix := ref[1 : mini+1]
-			if strings.Contains(currentWord, "nai") {
-				fmt.Println("prefixe2:", prefix, suffix, currentWord)
-
-			}
-			d = min(DamerauLevenshtein(prefix, currentWord), DamerauLevenshtein(suffix, currentWord))
-		} else {
-			currentWord = currentWord[:mini]
-			d = DamerauLevenshtein(ref, currentWord)
-		}
-
-		d = min(d, DamerauLevenshtein(ref, currentWord))
-		if strings.Contains(currentWord, "nai") {
-
-		fmt.Println("prefixe:", ref, currentWord)
-		fmt.Println("distance is:", d)
-		fmt.Println("---")
-		}
-		return !(d <= distance)
-	}
-	return false
-}
-
-
