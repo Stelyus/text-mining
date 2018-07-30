@@ -1,21 +1,28 @@
 package main
 
-import ("os")
+import (
+	"os"
+	"strconv"
+	"fmt"
+)
 
 func main() {
 	// Si lancer depuis autre que src, le path n'est pas correct
-	// distance, _ := strconv.Atoi(os.Args[3])
-	// word := os.Args[4]
+	path := os.Args[1]
+	distance, _ := strconv.Atoi(os.Args[2])
+	word := os.Args[3]
+	// trie := NewRadix()
+	// str := readFile(path)
+	// trie = addWordToTrie(&str, trie)
 
-	// out := getwords(trie, word, distance)
-	// out := getwords(trie, word, distance)
-	//fmt.Println(DamerauLevenshtein(word, "abilo"), distance)
-	//fmt.Println(out)
+	trie := deserialize(path)
+	out := testalgo(trie, word, distance)
 
-	// for k,v := range out{
-	// 	fmt.Println("{\"word\": \"", k, "\"freq\":", v, "\"distance\":", 2)
-	// }
-	// fmt.Println(len(out))
+	for k,v := range out{
+		fmt.Println("{\"word\": \"", k, "\"freq\":", v, "\"distance\":", 2)
+	}
+	fmt.Println(len(out))
 
-	deserialize(os.Args[1])
+	// serialize(trie, os.Args[2])
+	
 }
