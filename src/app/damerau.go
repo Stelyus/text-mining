@@ -124,7 +124,6 @@ func SearchRecursive(node *radix.Node, word string, currentWord string, previous
 				if (word[column] == currentWord[column - 1]) && (word[column-1] == currentWord[column]) {
 					transposition = true
 					d = min(previousRow[column] + subsCost, currentRow[column - 1])
-					//d = min(prevprev[column]+subsCost, currentRow[column-1])
 				}
 			}
 			currentRow = append(currentRow, d)

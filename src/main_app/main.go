@@ -21,7 +21,6 @@ func main() {
 		d, _ := strconv.Atoi(str[1])
 
 		res := app.GetDistance(trie, str[2], d)
-		//app.FormatResult(res)
 		fmt.Printf("%s\n", app.FormatResult(res))
 	}
 }
