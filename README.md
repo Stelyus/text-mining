@@ -76,10 +76,19 @@ TEXT_MINING_PROJECT
 ## Reponses aux questions
 
 ###  1.	Decrivez les choix de design de votre programme
+
 ### 2.	Listez l’ensemble des tests effectués sur votre programme (en plus des units tests)
 ### 3.	Avez-vous détecté des cas où la correction par distance ne fonctionnait pas (même avec une distance élevée) ?
+
 ### 4.	Quelle est la structure de données que vous avez implémentée dans votre projet, pourquoi ?
+Nous avons choisis d'utiliser un radix tree comme structure de donnée qui est une optimization du trie ou chaque noeud
+qui est un fils unique est fusionné avec son père. Cette structure permet une optimisation mémoire incroyable et permet
+d'effectuer une recherche d'un mots particulier en O(n) n étant la taille du mots. En faisant quelques recherches nous
+somme tombé sur cette structure qui semblais être implémentable sans trop de difficulté et nous en avons fait une
+première version avant de l'optimiser pour gagner en mémoire.
 ### 5.	Proposez un réglage automatique de la distance pour un programme qui prend juste une chaîne de caractères en entrée, donner le processus d’évaluation ainsi que les résultats
 ### 6.	Comment comptez vous améliorer les performances de votre programme
+nous pouvons essayer d'améliorer la sérialisation et la désérialisation qui ne sont pas encore optimal.
 ### 7.	Que manque-t-il à votre correcteur orthographique pour qu’il soit à l’état de l’art ?
+
 
