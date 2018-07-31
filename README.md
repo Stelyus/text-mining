@@ -11,6 +11,13 @@ Go possede un Garbage Collector permettant de nous faciliter la tache concernant
 Le but du projet est de produire deux binaires:
 - __TextMiningCompiler__: Il s'agit d'un binaire prenant en argument un fichier contenant des mots et leurs fréquences associés et le nom du fichier binaire qui sera géneré et qui contiendra un Radix Tree sérialisé.
 - __TextMiningApp__: Il s'agit d'un binaire qui prend  un fichier binaire contenant le Radix Tree sérialisé ainsi qu'un string à 'corriger' ainsi qu'un nombre représentant la distance de Damerau-Levenshtein.
+## Compilation
+
+Il faut tout d'abord installer Go sur son ordinateur Unix. Une fois Go installé:
+```
+$ sh build.sh
+```
+Le script va produire deux binaires: __TextMiningCompiler__ et __TextMiningApp__ 
 
 ## Architecture du projet
 ```
@@ -39,10 +46,21 @@ TEXT_MINING_PROJECT
 
 **build.sh**: Un script bash permettant de creer les deux binaires __TextMiningCompiler__ et __TextMiningApp__
 
+**ressources**: Contient des ressources et les fichiers textes pouvant être passé en paramètre aux binaires.
+
 **compiler**: Contient les fichiers sources de __TextMiningCompiler__
 
 **app**: Contient les fichiers sources de __TextMiningApp__
 
 **radix**: Contient le __Radix tree__ utilisé par le compiler et l'app
 
+## Reponses aux questions
+
+###  1.	Decrivez les choix de design de votre programme
+### 2.	Listez l’ensemble des tests effectués sur votre programme (en plus des units tests)
+### 3.	Avez-vous détecté des cas où la correction par distance ne fonctionnait pas (même avec une distance élevée) ?
+### 4.	Quelle est la structure de données que vous avez implémentée dans votre projet, pourquoi ?
+### 5.	Proposez un réglage automatique de la distance pour un programme qui prend juste une chaîne de caractères en entrée, donner le processus d’évaluation ainsi que les résultats
+### 6.	Comment comptez vous améliorer les performances de votre programme
+### 7.	Que manque-t-il à votre correcteur orthographique pour qu’il soit à l’état de l’art ?
 
