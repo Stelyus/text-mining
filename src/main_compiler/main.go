@@ -7,7 +7,6 @@ import (
 )
 
 func main() {
-	// Si lancer depuis autre que src, le path n'est pas correct
 	path := os.Args[1]
 	trie := radix.NewRadix()
 	str := compiler.ReadFile(path)

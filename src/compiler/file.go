@@ -101,6 +101,7 @@ func Serialize(root *radix.Tree, path string) {
 
 	os.Remove(path)
 	f, _ := os.OpenFile(path, os.O_CREATE|os.O_WRONLY, 0644)
+	defer f.Close()
 
 	// Write the number of root's edge and the size of the encoding for each one of the root's edge.
 	writeNumberOfEdges(f, root)
@@ -117,7 +118,6 @@ func Serialize(root *radix.Tree, path string) {
 		err := encoder.Encode(root.Root.Edges[i])
 
 		if err != nil {
-			f.Close()
 			panic(err)
 		}
 
@@ -139,7 +139,4 @@ func Serialize(root *radix.Tree, path string) {
     	binary.LittleEndian.PutUint32(bs, uint32(sizePerEdges[i]))
     	f.WriteAt(bs, (i * 4) + 2)
     }
-
-
-	f.Close()
 }

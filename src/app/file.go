@@ -55,6 +55,7 @@ func Deserialize(path string) *radix.Tree {
 	trie := radix.NewRadix()
 
 	f, err := os.Open(path)
+    defer f.Close()
 	check(err)
 
 	numberEdges := numberRootsEdge(f)
@@ -86,8 +87,6 @@ func Deserialize(path string) *radix.Tree {
 		// Add it to the root's edge    	
     	trie.Root.AddEdge(node)
     }
-
-    f.Close()
 
     return trie
 }
