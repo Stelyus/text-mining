@@ -45,6 +45,16 @@ $ go test app
 Le script `compare.js` est utilisé pour lancer des tests concernant la correction orthographique.
 ```
 $ node compare.js pathToRefBin pathToRefDict pathToMyBin pathToMyDict
+PASSED approx 0 test
+FAILED approx 1 test
+Not same length: ref: 160, me: 159
+Not the same on 62 th element
+{ word: 'etst', freq: 5403, distance: 1 }
+{ word: 'aest', freq: 4999, distance: 1 }
+Print the 5 first elements
+MISSING etst
+
+...
 ```
 __Attention__: Un path doit obligatoirement commencé par __./__ s'il se trouve dans le meme repertoire que le script.
 
