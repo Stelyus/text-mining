@@ -3,14 +3,15 @@ package main
 import (
 	"os"
 	"radix"
+	"compiler"
 )
 
 func main() {
 	// Si lancer depuis autre que src, le path n'est pas correct
 	path := os.Args[1]
 	trie := radix.NewRadix()
-	str := readFile(path)
-	trie = addWordToTrie(&str, trie)
+	str := compiler.ReadFile(path)
+	trie = compiler.AddWordToTrie(&str, trie)
 
-	serialize(trie, os.Args[2])
+	compiler.Serialize(trie, os.Args[2])
 }

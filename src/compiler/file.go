@@ -1,4 +1,4 @@
-package main
+package compiler
 
 import (
 	"strings"
@@ -13,7 +13,7 @@ import (
 )
 
 // Read a file and return the content
-func readFile(path string) string {
+func ReadFile(path string) string {
 	b, err := ioutil.ReadFile(path)
 
     if err != nil {
@@ -29,7 +29,7 @@ func readFile(path string) string {
 	Return the radix tree created
 */
 
-func addWordToTrie(text *string, root *radix.Tree) *radix.Tree {
+func AddWordToTrie(text *string, root *radix.Tree) *radix.Tree {
 	var first int = 0
 
 	for first < len(*text) {
@@ -85,7 +85,7 @@ func writeEdgesSize(f *os.File, root *radix.Tree) {
 	Serialize the tree into a dict.bin
 */
 
-func serialize(root *radix.Tree, path string) {
+func Serialize(root *radix.Tree, path string) {
 	var readerBuf bytes.Buffer;
 	encoder := gob.NewEncoder(&readerBuf)
 
