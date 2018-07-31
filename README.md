@@ -30,10 +30,14 @@ TEXT_MINING_PROJECT
 │   └───app
 │   |   │  damerau.go
 │   |   │  file.go
-│   |   │  main.go
+|   |   |
+|   └───main_app
+|   |   |   main.go
 |   |
 │   └───compiler
 |   |   | file.go
+|   |   |
+|   └───main_compiler
 |   |   | main.go
 |   |
 │   └─── radix
@@ -48,9 +52,11 @@ TEXT_MINING_PROJECT
 
 **ressources**: Contient des ressources et les fichiers textes pouvant être passé en paramètre aux binaires.
 
-**compiler**: Contient les fichiers sources de __TextMiningCompiler__
-
 **app**: Contient les fichiers sources de __TextMiningApp__
+**main_app**: Contient le main permettant la compilation de __TextMiningApp__
+
+**compiler**: Contient les fichiers sources de __TextMiningCompiler__
+**main_compiler**: Contient le main permettant la compilation de __TextMiningCompiler__
 
 **radix**: Contient le __Radix tree__ utilisé par le compiler et l'app
 
