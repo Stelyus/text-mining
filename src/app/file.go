@@ -1,3 +1,5 @@
+// Package app is used to create TextMiningApp.
+// There is two main features, the deserialization and the research using Damerau–Levenshtein distance
 package app
 
 import (
@@ -9,11 +11,9 @@ import (
 )
 
 
-/*
-	Read the two first byte of the file, and return the number in uint16.
-	The result represents the number of Root's Edge
-*/
 
+// Read the two first byte of the file, and return the number in uint16.
+// The result represents the number of Root's Edge
 func numberRootsEdge(f *os.File) uint16 {
 	numberEdgesByte := make([]byte, 2)
 	_, err := f.Read(numberEdgesByte)
@@ -21,17 +21,14 @@ func numberRootsEdge(f *os.File) uint16 {
     return binary.LittleEndian.Uint16(numberEdgesByte)
 }
 
-/*
-	Read the next four bytes in order to know what is the length of the encoded edges
-	Put the size into an array and return it
 
-	Ex: 05 00 00 00    0A 00 00 00
-	That means the first 4 bits represents the first edge and the size of the encoded edge 5
-	The next 4 represents the second edge and is encoded in 10 bytes.
-	After reading numberEdges * 4 bytes, there is the data
-	The file use Little Endian notation.
-*/
-
+// Read the next four bytes in order to know what is the length of the encoded edges
+// Put the size into an array and return it
+// Ex: 05 00 00 00    0A 00 00 00
+// That means the first 4 bits represents the first edge and the size of the encoded edge 5
+// The next 4 represents the second edge and is encoded in 10 bytes.
+// After reading numberEdges * 4 bytes, there is the data
+// The file use Little Endian notation.
 func bytesPerEdge(f *os.File, numberEdges uint16) []uint32 {
 
 	sizePerEdges := make([]uint32, numberEdges)
@@ -46,12 +43,15 @@ func bytesPerEdge(f *os.File, numberEdges uint16) []uint32 {
     return sizePerEdges
 }
 
-
+// Deserialize take a path in argument and return a radix.Tree
+// First it creates the root.
+// It reads the first two bytes which is the number of root's child (numberRootsEdge()).
+// And then it read the next n * 4 bytes in order to know what is the size of each child bytes size.
+// Finally it creates the nodes which will be append with the root.
 func Deserialize(path string) *radix.Tree {
 
-	/*
-		Create the root
-	*/
+		
+	// Create the root
 	trie := radix.NewRadix()
 
 	f, err := os.Open(path)
@@ -60,10 +60,7 @@ func Deserialize(path string) *radix.Tree {
 	numberEdges := numberRootsEdge(f)
 	sizePerEdges := bytesPerEdge(f, numberEdges)
 
-    /*
-		Creation de l'arbre
-    */
-
+	// Create children root
 	var readerBuf bytes.Buffer
 	decoder := gob.NewDecoder(&readerBuf)
 

@@ -5,7 +5,21 @@ import (
 )
 
 
+
+
+/*
+		Commente ton code comment j'ai fait dans file.go (meme dossier)
+		Quand tu commentes les fonctions commencant par une majuscule, ils doivent commencer par le meme nom que la fonction
+
+		Il faudra aussi commenter un peu a l'interieur de la fonction
+*/
+
+
+
+
+
 var out = make(map[string]rune)
+
 // min of two integers
 func min(a int, b int) (res int) {
 	if a < b {
