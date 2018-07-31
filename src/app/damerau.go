@@ -54,12 +54,13 @@ func makeRange(min, max int) []int {
 // take a radix tree, the word you are looking for and the distance as input
 // return an array of WordInfo which contains all the words and their frequency that are at a certain distance
 // using damerau-leveistein algorithm
+
 func GetDistance(n *radix.Tree, word string, distance int) []WordInfo {
 	var res = []WordInfo {}
 
 	currentRow := makeRange(0, len(word))
 	for _, f := range n.Root.Edges{
-		SearchRecursive(f, word, f.Prefix, currentRow, nil, distance, &res)
+		searchRecursive(f, word, f.Prefix, currentRow, nil, distance, &res)
 	}
 
 	sort.Slice(res, func(i, j int) bool {
@@ -75,14 +76,17 @@ func GetDistance(n *radix.Tree, word string, distance int) []WordInfo {
 	return res
 }
 
-
 // Recursively search on the radix tree and create a dynamic damerau-leveinsteing distance matrix
 // take a node, the word, the currentword that correspond to all the prefix of our branch concatenate, the previous
 // row of our matrix and the distance as input
-func SearchRecursive(node *radix.Node, word string, currentWord string, previousRow []int, prevprev []int, maxCost int, res *[]WordInfo){
+func searchRecursive(node *radix.Node, word string, currentWord string, previousRow []int, prevprev []int, maxCost int, res *[]WordInfo){
 	// initialize the currentRow with empty array
 	columns := len(word) + 1
 	currentRow := make([]int, 0)
+
+	if prevprev == nil {
+		prevprev = previousRow
+	}
 
 	// iterate through every letter of the current node
 	for t := range node.Prefix {
@@ -97,14 +101,10 @@ func SearchRecursive(node *radix.Node, word string, currentWord string, previous
 
 		// get the first value of the previous row to get the min distance from previous iteration
 		currentRow = append(currentRow, previousRow[0]+1)
-
+		offset := len(currentWord) - len(node.Prefix)
 		// iterate over the length of the word we are looking for
 		for column := 1; column < columns; column++ {
-			if transposition{
-				transposition = false
-				currentRow = append(currentRow, currentRow[len(currentRow) -1])
-				continue
-			}
+
 			// update the cost depending on the damerau leveinstein matrix
 			insertCost = currentRow[column-1] + 1
 			deleteCost = previousRow[column] + 1
@@ -120,12 +120,19 @@ func SearchRecursive(node *radix.Node, word string, currentWord string, previous
 			// if possible try to do a transposition and change the distance accordingly
 			d := min(min(insertCost, deleteCost), replaceCost)
 
-			if len(currentWord) > column && len(word) > column{
-				if (word[column] == currentWord[column - 1]) && (word[column-1] == currentWord[column]) {
+			if transposition && d > prevprev[column - 2] + 1 {
+				transposition = false
+				currentRow = append(currentRow, prevprev[column - 2] + 1)
+				continue
+			}
+			transposition = false
+
+			if t - 1 + offset >= 0 && len(word) > column {
+				if (column > 0 && word[column] == currentWord[t-1 + offset]) && (word[column-1] == currentWord[t + offset]) {
 					transposition = true
-					d = min(previousRow[column] + subsCost, currentRow[column - 1])
 				}
 			}
+
 			currentRow = append(currentRow, d)
 		}
 
@@ -140,12 +147,11 @@ func SearchRecursive(node *radix.Node, word string, currentWord string, previous
 
 	// search for the minimum value in the currentRow
 	m := minArray(currentRow)
-
 	// if the minimum value is inferior to the maxCost, continue the recursion
 	// else return that stop the recursion
 	if m <= maxCost {
 		for _,f := range node.Edges {
-			SearchRecursive(f, word, currentWord + f.Prefix, currentRow, previousRow, maxCost, res)
+			searchRecursive(f, word, currentWord + f.Prefix, currentRow, prevprev, maxCost, res)
 		}
 	}
 	return
