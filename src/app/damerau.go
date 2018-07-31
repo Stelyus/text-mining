@@ -2,6 +2,7 @@ package app
 
 import (
 	"radix"
+	"sort"
 )
 
 
@@ -11,16 +12,13 @@ import (
 
 		Il faudra aussi commenter un peu a l'interieur de la fonction
 */
-type triple struct {
+type Triple struct {
 	Word string
 	Freq int
 	Distance int
 }
 
-
-var out = make(map[string]rune)
-var res []triple
-var distances = make([]int, 0)
+var res []Triple
 
 // min of two integers
 func min(a int, b int) (res int) {
@@ -41,17 +39,24 @@ func makeRange(min, max int) []int {
 	return a
 }
 
-func GetDistance(n *radix.Tree, word string, distance int) []triple{
+func GetDistance(n *radix.Tree, word string, distance int) []Triple{
 	currentRow := makeRange(0, len(word))
 	for _, f := range n.Root.Edges{
 		searchRecursive(f, word, f.Prefix, currentRow, distance)
 	}
+
+	sort.Slice(res, func(i, j int) bool {
+		if res[i].Distance == res[j].Distance {
+			return res[i].Freq > res[j].Freq
+		}
+		return res[i].Distance < res[j].Distance
+	})
+
 	return res
 }
 
 func searchRecursive(node *radix.Node, word string, currentWord string, previousRow []int, maxCost int){
 	columns := len(word) + 1
-	//fmt.Println(currentWord)
 	currentRow := make([]int, 0)
 
 	for t := range node.Prefix {
@@ -91,9 +96,7 @@ func searchRecursive(node *radix.Node, word string, currentWord string, previous
 	}
 
 	if currentRow[len(currentRow) - 1] <= maxCost && node.IsLeaf() {
-		//out[node.Key] = node.Val
-		res = append(res, triple{node.Key, int(node.Val), (currentRow[len(currentRow)-1])})
-		//distances = append(distances, (currentRow[len(currentRow)-1]))
+		res = append(res, Triple{node.Key, int(node.Val), (currentRow[len(currentRow)-1])})
 	}
 
 	m := 1000000
