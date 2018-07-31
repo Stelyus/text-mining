@@ -7,6 +7,8 @@ import (
 
 
 func TestAddWordToTrie(test *testing.T) {
+	test.Log("Launching test on AddWordToTrie")
+
 	path := "../../ressources/test.txt"
 	str := ReadFile(path)
 
@@ -32,6 +34,8 @@ func TestAddWordToTrie(test *testing.T) {
 }
 
 func TestSerialize(test *testing.T) {
+	test.Log("Launching test on Serialize")
+
 	path := "../../ressources/test.txt"
 	str := ReadFile(path)
 
@@ -39,4 +43,14 @@ func TestSerialize(test *testing.T) {
 	AddWordToTrie(&str, trie)
 
 	Serialize(trie, "../../test_ressources/dict_test.bin")
+
+
+
+	pathRef := "../../ressources/words.txt"
+	strRef := ReadFile(pathRef)
+
+	trieRef := radix.NewRadix()
+	AddWordToTrie(&strRef, trieRef)
+
+	Serialize(trieRef, "../../test_ressources/dict_words.bin")
 }
