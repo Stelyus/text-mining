@@ -5,7 +5,6 @@ import (
 	"sort"
 	"math"
 	"strconv"
-	"fmt"
 )
 
 
@@ -85,10 +84,6 @@ func searchRecursive(node *radix.Node, word string, currentWord string, previous
 	columns := len(word) + 1
 	currentRow := make([]int, 0)
 
-	if prevprev != nil && len(prevprev) > 1000{
-		fmt.Println("d")
-	}
-
 	prevprev = previousRow
 	// iterate through every letter of the current node
 	for t := range node.Prefix {
@@ -127,13 +122,10 @@ func searchRecursive(node *radix.Node, word string, currentWord string, previous
 			d := min(min(insertCost, deleteCost), replaceCost)
 
 			if len(currentWord) > column && len(word) > column {
-				//fmt.Println(string(word[column - 1]), string(currentWord[column]))
-				//fmt.Println(string(word[column]), string(currentWord[column - 1]))
 				if (word[column] == currentWord[column-1]) && (word[column-1] == currentWord[column]) {
-					//fmt.Println("TRANSPOSITION")
-					//fmt.Println(previousRow, "prevprev", prevprev)
 					transposition = true
-					d = min(previousRow[column] + subsCost, currentRow[column - 1])
+					//d = min(previousRow[column] + subsCost, currentRow[column - 1])
+					d = min(prevprev[column] + subsCost, currentRow[column - 1])
 				}
 			}
 
@@ -142,9 +134,6 @@ func searchRecursive(node *radix.Node, word string, currentWord string, previous
 
 		previousRow = currentRow
 	}
-	//if currentWord == "ete"{
-	//	fmt.Println(currentRow, currentRow[len(currentRow) - 1], maxCost, node.IsLeaf())
-	//}
 
 	// if distance is inferior to maxCost and we are on a leaf we can add the word to our struct
 	if currentRow[len(currentRow) - 1] <= maxCost && node.IsLeaf() {
