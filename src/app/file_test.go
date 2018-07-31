@@ -2,13 +2,6 @@ package app
 
 import ("testing")
 
-func TestDeserialize(test *testing.T) {
-	test.Log("Launching test on Deserialize")
-	//trie := Deserialize("../../ressources/dict_words.bin")
-	// test.Errorf("Sum was incorrect, got: %d, want: %d.", 1, 10)
-
-}
-
 func TestGetDistance(test *testing.T) {
 	test.Log("Launching test on GetDistance")
 	trie := Deserialize("../../test_ressources/dict_words.bin")

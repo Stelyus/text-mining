@@ -1,31 +1,66 @@
-fs = require('fs')
+var fs = require('fs')
+var exec = require("child_process").exec;
 
-// First I want to read the file
-fs.readFile('./ref', function read(err, data) {
-    if (err) {
-        throw err;
-    }
 
-    // Invoke the next step here however you like
+function execute(command, done) {
+    path_binary_ref = process.argv[2]
+    path_dct_ref = process.argv[3]
 
-    var content = JSON.parse(data)
 
-    fs.readFile('./me', function read(err, data1) {
-         if (err) throw err;
+    path_binary_me = process.argv[4]
+    path_dct_me = process.argv[5]
 
-         var me_content = JSON.parse(data1)
+    exec(`echo "${command}" | ${path_binary_ref} ${path_dct_ref}`, function (err, stdout, stderr) {
+        ref = JSON.parse(stdout)
 
-        if (content.length != me_content.length) {
-            console.log(`Not same length: ref: ${content.length}, me: ${me_content.length}`);
-            return;
-        }
-        
-         for (let i = 0; i < me_content.length; i++) {
-            if (me_content[i].word != content[i].word || me_content[i].freq != content[i].freq || me_content[i].distance != content[i].distance)
+        exec(`echo "${command}" | ${path_binary_me} ${path_dct_me}`, function (err, stdout1, stderr) {
+            me = JSON.parse(stdout1)
+             if (ref.length != me.length) {
+                console.log('\x1b[31m%s\x1b[0m', "FAILED", command)
+                console.log(`Not same length: ref: ${ref.length}, me: ${me.length}`);
+            }
+            
+         for (let i = 0; i < me.length; i++) {
+            if (me[i].word != ref[i].word || me[i].freq != ref[i].freq || me[i].distance != ref[i].distance)
             {
+                if (ref.length == me.length) {
+                    console.log('\x1b[31m%s\x1b[0m', "FAILED", command)
+                }
+
                 console.log("Not the same on " + i + " th element")
-                return;
+                console.log(ref[i])
+                console.log(me[i])
+                return done()
             }
          }
+
+         console.log('\x1b[32m%s\x1b[0m', "PASSED", command)
+         done()
+        })
     })
-});
+}
+
+function testing() {
+    execute("approx 0 test", () => {
+        execute("approx 1 test", () => {
+            execute("approx 2 test", () => {
+                execute("approx 2 mylovekis", () => {
+                    execute("approx 4 mxrtnw4vrto", () => {
+                        execute("approx 2 mxcomp", () => {
+                            execute("approx 1 myzo", () => {
+                                execute("approx 2 test", () => {
+                                    execute("approx 4 nelidetours", () => {})
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+        })
+    })
+    
+    
+   
+}
+
+testing()
