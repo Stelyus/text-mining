@@ -11,6 +11,7 @@ Go possede un Garbage Collector permettant de nous faciliter la tache concernant
 Le but du projet est de produire deux binaires:
 - __TextMiningCompiler__: Il s'agit d'un binaire prenant en argument un fichier contenant des mots et leurs fréquences associés et le nom du fichier binaire qui sera géneré et qui contiendra un Radix Tree sérialisé.
 - __TextMiningApp__: Il s'agit d'un binaire qui prend  un fichier binaire contenant le Radix Tree sérialisé ainsi qu'un string à 'corriger' ainsi qu'un nombre représentant la distance de Damerau-Levenshtein.
+- 
 ## Compilation
 
 Il faut tout d'abord installer Go sur son ordinateur Unix. Une fois Go installé:
@@ -18,6 +19,18 @@ Il faut tout d'abord installer Go sur son ordinateur Unix. Une fois Go installé
 $ sh build.sh
 ```
 Le script va produire deux binaires: __TextMiningCompiler__ et __TextMiningApp__ 
+
+## Documentation
+
+Le code est bien documenté. Go possede un builtin permettant de génerer une documentation sur un server local. Pour se faire, imaginons que je veuille utiliser le port 6060:
+
+```
+$ godoc -http=:6060
+```
+__Attention__: Il faut changer la variable `GOPATH` pour qu'il soit égale à `pwd`.
+Ensuite, aller sur `localhost:6060/pkg` pour trouver tous les packages qu'utilisent notre projet. Vous trouverez notamment `app`, `compiler ` et `radix`, ou pouvez directement y accéder en allant sur `localhost:6060/pkg/app` etc.
+
+Si cela ne marche pas, vous pourrez toujours regarder le code par vous même.
 
 ## Architecture du projet
 ```
