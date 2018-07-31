@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"radix"
@@ -25,7 +25,7 @@ func makeRange(min, max int) []int {
 	return a
 }
 
-func testalgo(n *radix.Tree, word string, distance int) map[string]rune{
+func Testalgo(n *radix.Tree, word string, distance int) map[string]rune{
 	currentRow := makeRange(0, len(word))
 	for _, f := range n.Root.Edges{
 		searchRecursive(f, word, currentRow, distance)

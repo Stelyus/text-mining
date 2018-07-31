@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
     "radix"
@@ -47,7 +47,7 @@ func bytesPerEdge(f *os.File, numberEdges uint16) []uint32 {
 }
 
 
-func deserialize(path string) *radix.Tree {
+func Deserialize(path string) *radix.Tree {
 
 	/*
 		Create the root

@@ -5,6 +5,9 @@ OLD=$GOPATH
 export GOPATH=`pwd`
 
 go build -o TextMiningCompiler main_compiler
-go build -o TextMiningApp app
+echo 'TextMiningCompiler generated'
+
+go build -o TextMiningApp main_app
+echo 'TextMiningApp generated'
 
 export GOPATH=$OLD

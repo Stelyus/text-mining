@@ -4,6 +4,8 @@ import (
 	"os"
 	"strconv"
 	"fmt"
+
+	"app"
 )
 
 func main() {
@@ -15,8 +17,8 @@ func main() {
 	// str := readFile(path)
 	// trie = addWordToTrie(&str, trie)
 
-	trie := deserialize(path)
-	out := testalgo(trie, word, distance)
+	trie := app.Deserialize(path)
+	out := app.Testalgo(trie, word, distance)
 
 	for k,v := range out{
 		fmt.Println("{\"word\": \"", k, "\"freq\":", v, "\"distance\":", 2)
