@@ -11,7 +11,7 @@ Go possede un Garbage Collector permettant de nous faciliter la tache concernant
 Le but du projet est de produire deux binaires:
 - __TextMiningCompiler__: Il s'agit d'un binaire prenant en argument un fichier contenant des mots et leurs fréquences associés et le nom du fichier binaire qui sera géneré et qui contiendra un Radix Tree sérialisé.
 - __TextMiningApp__: Il s'agit d'un binaire qui prend  un fichier binaire contenant le Radix Tree sérialisé ainsi qu'un string à 'corriger' ainsi qu'un nombre représentant la distance de Damerau-Levenshtein.
-- 
+
 ## Compilation
 
 Il faut tout d'abord installer Go sur son ordinateur Unix. Une fois Go installé:
