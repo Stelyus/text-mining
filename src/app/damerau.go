@@ -84,6 +84,10 @@ func searchRecursive(node *radix.Node, word string, currentWord string, previous
 	columns := len(word) + 1
 	currentRow := make([]int, 0)
 
+	//if currentWord == "ets"{
+	//	fmt.Println(currentWord)
+	//}
+
 	// iterate through every letter of the current node
 	for t := range node.Prefix {
 
@@ -120,16 +124,16 @@ func searchRecursive(node *radix.Node, word string, currentWord string, previous
 			// if possible try to do a transposition and change the distance accordingly
 			d := min(min(insertCost, deleteCost), replaceCost)
 
-			//if currentWord == "tets" {
-				//fmt.Println("word:", currentWord, "current row :", currentRow, len(currentRow),  "previous row :", previousRow, len(previousRow), "column",  column)
-				if column > 1 {
+			//if currentWord == "ets" {
+			//	fmt.Println("word:", currentWord, "current row :", currentRow, len(currentRow),  "previous row :", previousRow, len(previousRow), "column",  column)
+				if column >= 1 {
 					if len(currentWord) > column && len(word) > column {
 						//fmt.Println(string(word[column - 1]), string(currentWord[column]))
 						//fmt.Println(string(word[column]), string(currentWord[column - 1]))
 						if (word[column] == currentWord[column-1]) && (word[column-1] == currentWord[column]) {
 							//fmt.Println("TRANSPOSITION")
 							transposition = true
-							d = min(previousRow[column-1]+subsCost, currentRow[column - 1])
+							d = min(previousRow[column-1] + subsCost, currentRow[column - 1])
 						}
 					}
 				}
