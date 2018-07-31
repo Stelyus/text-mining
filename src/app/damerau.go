@@ -3,15 +3,11 @@ package app
 import (
 	"radix"
 	"sort"
+	"math"
 )
 
 
-/*
-		Commente ton code comment j'ai fait dans file.go (meme dossier)
-		Quand tu commentes les fonctions commencant par une majuscule, ils doivent commencer par le meme nom que la fonction
-
-		Il faudra aussi commenter un peu a l'interieur de la fonction
-*/
+// Structure that is use to stock word, frequency and distance
 type Triple struct {
 	Word string
 	Freq int
@@ -21,6 +17,7 @@ type Triple struct {
 var res []Triple
 
 // min of two integers
+// take two int as imput and return an int
 func min(a int, b int) (res int) {
 	if a < b {
 		res = a
@@ -31,6 +28,21 @@ func min(a int, b int) (res int) {
 	return
 }
 
+// return minimum value in a array
+// take an array of int as input, return an int
+func minArray(arr []int) int{
+	m := math.MaxInt8
+
+	for _, e := range arr {
+		if e < m {
+			m = e
+		}
+	}
+	return m
+}
+
+// create an array of int from min to max
+// take two int as input and return an int array
 func makeRange(min, max int) []int {
 	a := make([]int, max-min+1)
 	for i := range a {
@@ -39,6 +51,10 @@ func makeRange(min, max int) []int {
 	return a
 }
 
+// Call the recursive search on the radix tree and sort the result
+// take a radix tree, the word you are looking for and the distance as input
+// return an array of Triple which contains all the words and their frequency that are at a certain distance
+// using damerau-leveistein algorithm
 func GetDistance(n *radix.Tree, word string, distance int) []Triple{
 	currentRow := makeRange(0, len(word))
 	for _, f := range n.Root.Edges{
@@ -55,31 +71,43 @@ func GetDistance(n *radix.Tree, word string, distance int) []Triple{
 	return res
 }
 
+// recursively search on the radix tree and create a dynamic damerau-leveinsteing distance matrix
+// take a node, the word, the currentword that correspond to all the prefix of our branch concatenate, the previous
+// row of our matrix and the distance as input
 func searchRecursive(node *radix.Node, word string, currentWord string, previousRow []int, maxCost int){
+	// initialize the currentRow with empty array
 	columns := len(word) + 1
 	currentRow := make([]int, 0)
 
+	// iterate through every letter of the current node
 	for t := range node.Prefix {
 
+		// initialize variable
 		letter := node.Prefix[t]
 		currentRow = make([]int, 0)
-		currentRow = append(currentRow, previousRow[0]+1)
-
 		insertCost := 0
 		deleteCost := 0
 		replaceCost := 0
 
+		// get the first value of the previous row to get the min distance from previous iteration
+		currentRow = append(currentRow, previousRow[0]+1)
+
+		// iterate over the length of the word we are looking for
 		for column := 1; column < columns; column++ {
 
+			// update the cost depending on the damerau leveinstein matrix
 			insertCost = currentRow[column-1] + 1
 			deleteCost = previousRow[column] + 1
 			subsCost := 0
+
+			// substitution cost
 			if word[column-1] != letter {
 				subsCost = 1
 			}
 
 			replaceCost = previousRow[column - 1] + subsCost
 
+			// if possible try to do a transposition and change the distance accordingly
 			d := min(min(insertCost, deleteCost), replaceCost)
 			if column > 1 {
 				if len(currentWord) > column && len(word) > column && len(currentRow) > column {
@@ -95,16 +123,16 @@ func searchRecursive(node *radix.Node, word string, currentWord string, previous
 		previousRow = currentRow
 	}
 
+	// if distance is inferior to maxCost and we are on a leaf we can add the word to our struct
 	if currentRow[len(currentRow) - 1] <= maxCost && node.IsLeaf() {
 		res = append(res, Triple{node.Key, int(node.Val), (currentRow[len(currentRow)-1])})
 	}
 
-	m := 1000000
-	for _, e := range currentRow {
-		if e < m {
-			m = e
-		}
-	}
+	// search for the minimum value in the currentRow
+	m := minArray(currentRow)
+
+	// if the minimum value is inferior to the maxCost, continue the recursion
+	// else return that stop the recursion
 	if m <= maxCost {
 		for _,f := range node.Edges {
 			searchRecursive(f, word, currentWord + f.Prefix, currentRow, maxCost)
