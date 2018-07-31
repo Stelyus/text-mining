@@ -30,7 +30,23 @@ $ godoc -http=:6060
 __Attention__: Il faut changer la variable `GOPATH` pour qu'il soit égale à `pwd`.
 Ensuite, aller sur `localhost:6060/pkg` pour trouver tous les packages qu'utilisent notre projet. Vous trouverez notamment `app`, `compiler ` et `radix`, ou pouvez directement y accéder en allant sur `localhost:6060/pkg/app` etc.
 
-Si cela ne marche pas, vous pourrez toujours regarder le code par vous même.
+Si cela ne marche pas, vous pourrez toujours regarder le code directement dans les fichiers sources.
+
+
+## Test suite
+
+Go possede un builtin (aussi) permettant de lancer des tests. Avant de lancer la commande, veuillez etre sur que la variable env `GOROOT`soit égale a `pwd`. La commande permettant de lancer les tests est:
+
+```
+$ go test compiler
+$ go test app
+```
+
+Le script `compare.js` est utilisé pour lancer des tests concernant la correction orthographique.
+```
+$ node compare.js pathToRefBin pathToRefDict pathToMyBin pathToMyDict
+```
+__Attention__: Un path doit obligatoirement commencé par __./__ s'il se trouve dans le meme repertoire que le script.
 
 ## Architecture du projet
 ```
@@ -38,6 +54,7 @@ TEXT_MINING_PROJECT
 │   README.md
 │   AUTHORS
 │   build.sh
+│   compare.js
 └───src
 │   │
 │   └───app
@@ -59,11 +76,19 @@ TEXT_MINING_PROJECT
     │   words.txt
     │   test.txt
     |   subject.txt
+|       
+| ───test_ressources
+    | dict_test.bin
+
 ```
 
 **build.sh**: Un script bash permettant de creer les deux binaires __TextMiningCompiler__ et __TextMiningApp__
 
+**compare.js**: Lance une suite de tests sur la correction orthographique.
+
 **ressources**: Contient des ressources et les fichiers textes pouvant être passé en paramètre aux binaires.
+
+**test_ressources**: Contient des ressources utiles pour go test
 
 **app**: Contient les fichiers sources de __TextMiningApp__
 **main_app**: Contient le main permettant la compilation de __TextMiningApp__
@@ -76,19 +101,29 @@ TEXT_MINING_PROJECT
 ## Reponses aux questions
 
 ###  1.	Decrivez les choix de design de votre programme
+Nous avons réalisé le projet en Go, le Go nous impose d'avoir une architecture du projet particulière. Nous devons produire deux executables, et de ce fait nous avons quatres dossiers.
+
+Le dossier app contient des fichiers qui forment le `package app`. Ce package contient toutes les fonctions necessaires pour produire le binaire __TextMiningApp__. Les packages sont des sortes de namespaces.
+C'est la meme chose concernant le dossier compiler qui forment le `package compiler`. Leurs "main" respectives sont dans d'autres dossiers car ils sont dans le `package main`.
+
+Le dossier radix contient un fichier qui forme le `package radix`. Ce package est utilisé par les autres fichiers.
 
 ### 2.	Listez l’ensemble des tests effectués sur votre programme (en plus des units tests)
+
 ### 3.	Avez-vous détecté des cas où la correction par distance ne fonctionnait pas (même avec une distance élevée) ?
 
 ### 4.	Quelle est la structure de données que vous avez implémentée dans votre projet, pourquoi ?
-Nous avons choisis d'utiliser un radix tree comme structure de donnée qui est une optimization du trie ou chaque noeud
-qui est un fils unique est fusionné avec son père. Cette structure permet une optimisation mémoire incroyable et permet
-d'effectuer une recherche d'un mots particulier en O(n) n étant la taille du mots. En faisant quelques recherches nous
-somme tombé sur cette structure qui semblais être implémentable sans trop de difficulté et nous en avons fait une
+Nous avons choisis d'utiliser un Radix tree comme structure de donnée qui est une optimisation du trie où chaque noeud qui est un fils unique est fusionné avec son père. Cette structure permet une optimisation mémoire incroyable et permet
+d'effectuer une recherche d'un mots particulier en O(n) n étant la taille du mots. En faisant quelques recherches nous sommes tombés sur cette structure qui semblait être implémentable sans trop de difficulté et nous en avons fait une
 première version avant de l'optimiser pour gagner en mémoire.
+
 ### 5.	Proposez un réglage automatique de la distance pour un programme qui prend juste une chaîne de caractères en entrée, donner le processus d’évaluation ainsi que les résultats
+
 ### 6.	Comment comptez vous améliorer les performances de votre programme
-nous pouvons essayer d'améliorer la sérialisation et la désérialisation qui ne sont pas encore optimal.
+
+Nous pouvons essayer d'améliorer la sérialisation et la désérialisation qui ne sont pas encore optimal car on a dû baisser notre consommation de RAM. Nous pouvons implementer un Patricia Trie, qui selon nous coute moins cher en mémoire.
+Un autre moyen d'ameliorer les performances de notre programmes serait d'utiliser un bloom filter (CF cours :))
+
 ### 7.	Que manque-t-il à votre correcteur orthographique pour qu’il soit à l’état de l’art ?
 
 
