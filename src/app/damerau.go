@@ -5,17 +5,12 @@ import (
 )
 
 
-
-
 /*
 		Commente ton code comment j'ai fait dans file.go (meme dossier)
 		Quand tu commentes les fonctions commencant par une majuscule, ils doivent commencer par le meme nom que la fonction
 
 		Il faudra aussi commenter un peu a l'interieur de la fonction
 */
-
-
-
 
 
 var out = make(map[string]rune)
@@ -39,7 +34,7 @@ func makeRange(min, max int) []int {
 	return a
 }
 
-func Testalgo(n *radix.Tree, word string, distance int) map[string]rune{
+func getDistance(n *radix.Tree, word string, distance int) map[string]rune{
 	currentRow := makeRange(0, len(word))
 	for _, f := range n.Root.Edges{
 		searchRecursive(f, word, currentRow, distance)

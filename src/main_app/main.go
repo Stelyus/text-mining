@@ -8,11 +8,14 @@ import (
 	"bufio"
 
 	"app"
+	"fmt"
 )
 
 func main() {
 
-	readInput()
+	a := readInput()
+
+	fmt.Println(a)
 
 	path := os.Args[1]
 	// distance, err := strconv.Atoi(os.Args[2])
@@ -23,7 +26,7 @@ func main() {
 	// word := os.Args[3]
 
 	app.Deserialize(path)
-	// out := app.Testalgo(trie, word, distance)
+	// out := app.getDistance(trie, word, distance)
 
 	// for k,v := range out{
 	// 	fmt.Println("{\"word\": \"", k, "\"freq\":", v, "\"distance\":", 2)
