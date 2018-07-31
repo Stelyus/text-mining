@@ -76,6 +76,7 @@ func GetDistance(n *radix.Tree, word string, distance int) []WordInfo {
 	return res
 }
 
+
 // Recursively search on the radix tree and create a dynamic damerau-leveinsteing distance matrix
 // take a node, the word, the currentword that correspond to all the prefix of our branch concatenate, the previous
 // row of our matrix and the distance as input
@@ -84,7 +85,6 @@ func searchRecursive(node *radix.Node, word string, currentWord string, previous
 	columns := len(word) + 1
 	currentRow := make([]int, 0)
 
-	prevprev = previousRow
 	// iterate through every letter of the current node
 	for t := range node.Prefix {
 
@@ -121,17 +121,17 @@ func searchRecursive(node *radix.Node, word string, currentWord string, previous
 			// if possible try to do a transposition and change the distance accordingly
 			d := min(min(insertCost, deleteCost), replaceCost)
 
-			if len(currentWord) > column && len(word) > column {
-				if (word[column] == currentWord[column-1]) && (word[column-1] == currentWord[column]) {
+			if len(currentWord) > column && len(word) > column{
+				if (word[column] == currentWord[column - 1]) && (word[column-1] == currentWord[column]) {
 					transposition = true
-					//d = min(previousRow[column] + subsCost, currentRow[column - 1])
-					d = min(prevprev[column] + subsCost, currentRow[column - 1])
+					d = min(previousRow[column] + subsCost, currentRow[column - 1])
+					//d = min(prevprev[column]+subsCost, currentRow[column-1])
 				}
 			}
-
 			currentRow = append(currentRow, d)
 		}
 
+		prevprev = previousRow
 		previousRow = currentRow
 	}
 
@@ -147,7 +147,7 @@ func searchRecursive(node *radix.Node, word string, currentWord string, previous
 	// else return that stop the recursion
 	if m <= maxCost {
 		for _,f := range node.Edges {
-			searchRecursive(f, word, currentWord + f.Prefix, currentRow, prevprev, maxCost, res)
+			searchRecursive(f, word, currentWord + f.Prefix, currentRow, previousRow, maxCost, res)
 		}
 	}
 	return
