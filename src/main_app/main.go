@@ -9,29 +9,42 @@ import (
 
 	"app"
 	"fmt"
+	"strconv"
+	"sort"
 )
+
+type triple struct {
+	Word string
+	Freq int
+	Distance int
+}
 
 func main() {
 
 	a := readInput()
-
-	fmt.Println(a)
-
 	path := os.Args[1]
-	// distance, err := strconv.Atoi(os.Args[2])
-	// if err != nil {
-	// 	panic(err)
-	// }
 
-	// word := os.Args[3]
+	trie := app.Deserialize(path)
+	s:= a[0]
+	str := strings.Split(s, " ")
+	d,_ := strconv.Atoi(str[1])
+	res := app.GetDistance(trie, str[2], d)
 
-	app.Deserialize(path)
-	// out := app.getDistance(trie, word, distance)
+	sort.Slice(res, func(i, j int) bool {
+		return res[i].Freq > res[j].Freq
+	})
 
-	// for k,v := range out{
-	// 	fmt.Println("{\"word\": \"", k, "\"freq\":", v, "\"distance\":", 2)
-	// }
-	// fmt.Println(len(out))	
+	sort.Slice(res, func(i, j int) bool {
+		return res[i].Distance < res[j].Distance
+	})
+
+	fmt.Printf("[")
+	for _,v := range res{
+		fmt.Printf("{\"word\":\"%s\",\"freq\":%d,\"distance\":%d},", v.Word, v.Freq, v.Distance)
+	}
+	fmt.Printf("]\n")
+
+	//fmt.Println(len(res))
 }
 
 
