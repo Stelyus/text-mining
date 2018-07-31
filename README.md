@@ -136,7 +136,7 @@ première version avant de l'optimiser pour gagner en mémoire.
 
 ### 5.	Proposez un réglage automatique de la distance pour un programme qui prend juste une chaîne de caractères en entrée, donner le processus d’évaluation ainsi que les résultats
 
-le but serais de prendre en entrée la chaine de caractère, de rechercher à une distance de 0 sur notre dictionnaire,
+Le but serais de prendre en entrée la chaine de caractère, de rechercher à une distance de 0 sur notre dictionnaire,
 si l'on trouve un résultat on ne fait rien, sinon on recherche à une distance de 1 et ainsi de suite jusqu'à une distance
 de 3 car après cette distance les mots n'ont aucun rapports entre eux.
 

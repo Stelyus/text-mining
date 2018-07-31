@@ -54,7 +54,6 @@ func makeRange(min, max int) []int {
 // take a radix tree, the word you are looking for and the distance as input
 // return an array of WordInfo which contains all the words and their frequency that are at a certain distance
 // using damerau-leveistein algorithm
-
 func GetDistance(n *radix.Tree, word string, distance int) []WordInfo {
 	var res = []WordInfo {}
 
@@ -166,6 +165,5 @@ func FormatResult(res []WordInfo) string{
 		i++
 	}
 	str += "]"
-//fmt.Println(len(res))
 	return str
 }
