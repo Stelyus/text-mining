@@ -5,7 +5,7 @@ Le projet a été réalisé par **Franck THANG** (EPITA 2019) et **Hadrien BERTH
 
 ## Introduction
 
-Concernant le langage, nous avons décidé d'utiliser __Go__. C'est un langage dont nous avons jamais eut l'opportunité de tester. C'est un langage de plus en plus populaire, une forme de C et C++ modernisée. Il est reconnu pour avoir une performance comparable au C++.
+Concernant le langage, nous avons décidé d'utiliser __Go__. C'est un langage dont nous avons jamais eu l'opportunité de tester. C'est un langage de plus en plus populaire, une forme de C et C++ modernisée. Il est reconnu pour avoir une performance comparable au C++.
 Go possede un Garbage Collector permettant de nous faciliter la tache concernant les contraintes de memoires.
 
 Le but du projet est de produire deux binaires:
