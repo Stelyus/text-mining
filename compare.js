@@ -30,6 +30,19 @@ function execute(command, done) {
                 console.log("Not the same on " + i + " th element")
                 console.log(ref[i])
                 console.log(me[i])
+
+                if (ref.length != me.length) {
+                    w_ref = ref.map(w => w.word)
+                    w_me = me.map(w=>w.word)
+
+                    console.log("Print the 5 first elements")
+                    w_ref.filter(w => w_me.indexOf(w) == -1).forEach((w, i) => {
+                        if (i < 5) console.log('\x1b[33m%s\x1b[0m', "MISSING", w)
+                    })
+                }
+
+                console.log()
+
                 return done()
             }
          }
@@ -50,6 +63,7 @@ function testing() {
                             execute("approx 1 myzo", () => {
                                 execute("approx 1 nabilo", () => {
                                     execute("approx 4 nelidetours", () => {
+                                        execute("approx 2 nabilo", () => {})
                                     })
                                 })
                             })
