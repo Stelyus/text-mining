@@ -16,13 +16,14 @@ func main() {
 
 	trie := app.Deserialize(path)
 
-	s:= a[0]
-	str := strings.Split(s, " ")
-	d,_ := strconv.Atoi(str[1])
+	for _, s := range a {
+		str := strings.Split(s, " ")
+		d, _ := strconv.Atoi(str[1])
 
-	res := app.GetDistance(trie, str[2], d)
-	//app.FormatResult(res)
-	fmt.Printf("%s\n", app.FormatResult(res))
+		res := app.GetDistance(trie, str[2], d)
+		//app.FormatResult(res)
+		fmt.Printf("%s\n", app.FormatResult(res))
+	}
 }
 
 
