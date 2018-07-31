@@ -5,6 +5,7 @@ import (
 	"sort"
 	"math"
 	"strconv"
+	"fmt"
 )
 
 
@@ -60,7 +61,7 @@ func GetDistance(n *radix.Tree, word string, distance int) []WordInfo {
 
 	currentRow := makeRange(0, len(word))
 	for _, f := range n.Root.Edges{
-		searchRecursive(f, word, f.Prefix, currentRow, distance, &res)
+		searchRecursive(f, word, f.Prefix, currentRow, nil, distance, &res)
 	}
 
 	sort.Slice(res, func(i, j int) bool {
@@ -79,15 +80,16 @@ func GetDistance(n *radix.Tree, word string, distance int) []WordInfo {
 // Recursively search on the radix tree and create a dynamic damerau-leveinsteing distance matrix
 // take a node, the word, the currentword that correspond to all the prefix of our branch concatenate, the previous
 // row of our matrix and the distance as input
-func searchRecursive(node *radix.Node, word string, currentWord string, previousRow []int, maxCost int, res *[]WordInfo){
+func searchRecursive(node *radix.Node, word string, currentWord string, previousRow []int, prevprev []int, maxCost int, res *[]WordInfo){
 	// initialize the currentRow with empty array
 	columns := len(word) + 1
 	currentRow := make([]int, 0)
 
-	//if currentWord == "ets"{
-	//	fmt.Println(currentWord)
-	//}
+	if prevprev != nil && len(prevprev) > 1000{
+		fmt.Println("d")
+	}
 
+	prevprev = previousRow
 	// iterate through every letter of the current node
 	for t := range node.Prefix {
 
@@ -124,27 +126,25 @@ func searchRecursive(node *radix.Node, word string, currentWord string, previous
 			// if possible try to do a transposition and change the distance accordingly
 			d := min(min(insertCost, deleteCost), replaceCost)
 
-			//if currentWord == "ets" {
-			//	fmt.Println("word:", currentWord, "current row :", currentRow, len(currentRow),  "previous row :", previousRow, len(previousRow), "column",  column)
-				if column >= 1 {
-					if len(currentWord) > column && len(word) > column {
-						//fmt.Println(string(word[column - 1]), string(currentWord[column]))
-						//fmt.Println(string(word[column]), string(currentWord[column - 1]))
-						if (word[column] == currentWord[column-1]) && (word[column-1] == currentWord[column]) {
-							//fmt.Println("TRANSPOSITION")
-							transposition = true
-							d = min(previousRow[column-1] + subsCost, currentRow[column - 1])
-						}
-					}
+			if len(currentWord) > column && len(word) > column {
+				//fmt.Println(string(word[column - 1]), string(currentWord[column]))
+				//fmt.Println(string(word[column]), string(currentWord[column - 1]))
+				if (word[column] == currentWord[column-1]) && (word[column-1] == currentWord[column]) {
+					//fmt.Println("TRANSPOSITION")
+					//fmt.Println(previousRow, "prevprev", prevprev)
+					transposition = true
+					d = min(previousRow[column] + subsCost, currentRow[column - 1])
 				}
-				//fmt.Println(d)
-				//fmt.Println(currentRow, d)
-			//}
+			}
+
 			currentRow = append(currentRow, d)
 		}
 
 		previousRow = currentRow
 	}
+	//if currentWord == "ete"{
+	//	fmt.Println(currentRow, currentRow[len(currentRow) - 1], maxCost, node.IsLeaf())
+	//}
 
 	// if distance is inferior to maxCost and we are on a leaf we can add the word to our struct
 	if currentRow[len(currentRow) - 1] <= maxCost && node.IsLeaf() {
@@ -158,7 +158,7 @@ func searchRecursive(node *radix.Node, word string, currentWord string, previous
 	// else return that stop the recursion
 	if m <= maxCost {
 		for _,f := range node.Edges {
-			searchRecursive(f, word, currentWord + f.Prefix, currentRow, maxCost, res)
+			searchRecursive(f, word, currentWord + f.Prefix, currentRow, prevprev, maxCost, res)
 		}
 	}
 	return
@@ -177,6 +177,6 @@ func FormatResult(res []WordInfo) string{
 		i++
 	}
 	str += "]"
-
+//fmt.Println(len(res))
 	return str
 }
