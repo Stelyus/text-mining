@@ -93,13 +93,18 @@ func searchRecursive(node *radix.Node, word string, currentWord string, previous
 		insertCost := 0
 		deleteCost := 0
 		replaceCost := 0
+		transposition := false
 
 		// get the first value of the previous row to get the min distance from previous iteration
 		currentRow = append(currentRow, previousRow[0]+1)
 
 		// iterate over the length of the word we are looking for
 		for column := 1; column < columns; column++ {
-
+			if transposition{
+				transposition = false
+				currentRow = append(currentRow, currentRow[len(currentRow) -1])
+				continue
+			}
 			// update the cost depending on the damerau leveinstein matrix
 			insertCost = currentRow[column-1] + 1
 			deleteCost = previousRow[column] + 1
@@ -114,14 +119,23 @@ func searchRecursive(node *radix.Node, word string, currentWord string, previous
 
 			// if possible try to do a transposition and change the distance accordingly
 			d := min(min(insertCost, deleteCost), replaceCost)
-			if column > 1 {
-				if len(currentWord) > column && len(word) > column && len(currentRow) > column {
-					//fmt.Println(len(currentWord), len(word), column)
-					if (word[column] == currentWord[column-1]) && (word[column-1] == currentWord[column]) {
-						d = min(previousRow[column - 2] + subsCost, currentRow[column])
+
+			//if currentWord == "tets" {
+				//fmt.Println("word:", currentWord, "current row :", currentRow, len(currentRow),  "previous row :", previousRow, len(previousRow), "column",  column)
+				if column > 1 {
+					if len(currentWord) > column && len(word) > column {
+						//fmt.Println(string(word[column - 1]), string(currentWord[column]))
+						//fmt.Println(string(word[column]), string(currentWord[column - 1]))
+						if (word[column] == currentWord[column-1]) && (word[column-1] == currentWord[column]) {
+							//fmt.Println("TRANSPOSITION")
+							transposition = true
+							d = min(previousRow[column-1]+subsCost, currentRow[column - 1])
+						}
 					}
 				}
-			}
+				//fmt.Println(d)
+				//fmt.Println(currentRow, d)
+			//}
 			currentRow = append(currentRow, d)
 		}
 
