@@ -31,10 +31,9 @@ func main() {
 	res := app.GetDistance(trie, str[2], d)
 
 	sort.Slice(res, func(i, j int) bool {
-		return res[i].Freq > res[j].Freq
-	})
-
-	sort.Slice(res, func(i, j int) bool {
+		if res[i].Distance == res[j].Distance {
+			return res[i].Freq > res[j].Freq
+		}
 		return res[i].Distance < res[j].Distance
 	})
 
