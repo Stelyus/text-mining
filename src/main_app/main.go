@@ -27,12 +27,20 @@ func main() {
 }
 
 
-func printResult(res []app.Triple){
-	fmt.Printf("[")
+func printResult(res []app.Triple) string{
+	i := 1
+	str := "["
 	for _,v := range res{
-		fmt.Printf("{\"word\":\"%s\",\"freq\":%d,\"distance\":%d},", v.Word, v.Freq, v.Distance)
+		if i != len(res) {
+			str += "{\"word\":\"" + v.Word + "\",\"freq\":" + strconv.Itoa(v.Freq) + ",\"distance\":"+ strconv.Itoa(v.Distance) + "},"
+		}else{
+			str += "{\"word\":\"" + v.Word + "\",\"freq\":" + strconv.Itoa(v.Freq) + ",\"distance\":"+ strconv.Itoa(v.Distance) + "}"
+		}
+		i++
 	}
-	fmt.Printf("]\n")
+	str += "]"
+	fmt.Printf("%s\n", str)
+	return str
 }
 
 // readInput read input, parse with delimiter '\n' and return lines in an array
